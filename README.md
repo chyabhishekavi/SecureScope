@@ -1,0 +1,86 @@
+# SecureScope
+
+SecureScope is a flagship full-stack security scanning dashboard for developers who want fast, understandable security feedback before code reaches production.
+
+The project will be built feature by feature with a clean Angular frontend, a Spring Boot backend, PostgreSQL persistence, JWT authentication, and developer-friendly scan reports.
+
+## Project Overview
+
+SecureScope will allow users to scan source code and project artifacts for common application security risks. The dashboard will focus on clear findings, masked sensitive values, OWASP Top 10 mapping, practical remediation guidance, and exportable reports.
+
+## SecureScope Features
+
+- Quick Code Scan for pasted snippets
+- Project ZIP upload and scan
+- GitHub repository connection and scan
+- Hardcoded secret detection with masked output
+- Vulnerable dependency detection
+- Risky code pattern detection
+- Missing security best practice checks
+- OWASP Top 10 mapped findings
+- Security score calculation
+- Developer-friendly fix recommendations
+- HTML and PDF security reports
+- Authenticated user dashboard
+- Scan history and report management
+
+## Tech Stack
+
+### Frontend
+
+- Angular
+- TypeScript
+- Angular Material
+- RxJS
+- SCSS
+- Chart.js or ApexCharts
+
+### Backend
+
+- Java
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Maven
+- JWT authentication
+
+## Planned Modules
+
+- Authentication and user accounts
+- Scan request management
+- Quick code scanner
+- ZIP project scanner
+- GitHub repository scanner
+- Secret detection engine
+- Dependency vulnerability analyzer
+- Risk pattern analyzer
+- OWASP mapping service
+- Security scoring service
+- Report generation service
+- Dashboard analytics
+- Admin and audit views
+
+## Development Roadmap
+
+1. Workspace initialization and project documentation
+2. Backend foundation with Spring Boot dependencies and configuration
+3. Authentication with JWT and role-based access
+4. Quick Code Scan API
+5. Secret detection rules and masked findings
+6. Security score and OWASP mapping
+7. Angular application foundation
+8. Quick Code Scan UI
+9. Scan history and report details
+10. ZIP upload scanner
+11. GitHub repository scanner
+12. HTML/PDF report generation
+13. Dashboard charts and analytics
+14. Testing, validation, and deployment preparation
+
+## Security Disclaimer
+
+SecureScope is intended to support developer security reviews and learning. It should not be treated as a complete replacement for professional penetration testing, secure code review, dependency auditing, threat modeling, or compliance assessment.
+
+Sensitive values must be masked in the UI, API responses, logs, and reports. The project should never intentionally expose full secrets discovered during scans.
