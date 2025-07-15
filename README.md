@@ -46,6 +46,57 @@ SecureScope will allow users to scan source code and project artifacts for commo
 - Maven
 - JWT authentication
 
+## Backend Setup
+
+The Spring Boot backend project is located at:
+
+```text
+securescope-backend/securescope-backend
+```
+
+### Prerequisites
+
+- Java 17 or newer
+- Maven wrapper included with the backend project
+
+### Run the Backend
+
+From the backend project folder:
+
+```powershell
+cd securescope-backend/securescope-backend
+./mvnw spring-boot:run
+```
+
+On Windows PowerShell, you can also run:
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd spring-boot:run
+```
+
+### Validate the Backend Build
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd clean test
+```
+
+### Health Check API
+
+```http
+GET /api/health
+```
+
+Expected response:
+
+```json
+{
+  "status": "UP",
+  "message": "SecureScope backend is running"
+}
+```
+
 ## Planned Modules
 
 - Authentication and user accounts
