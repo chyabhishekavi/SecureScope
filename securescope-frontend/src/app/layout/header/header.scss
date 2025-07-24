@@ -1,0 +1,52 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 64px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.94);
+  color: #0f172a;
+  backdrop-filter: blur(16px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.spacer {
+  flex: 1;
+}
+
+a[mat-button],
+a[mat-flat-button] {
+  margin-left: 8px;
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding-inline: 12px;
+  }
+
+  a[mat-button],
+  a[mat-flat-button] {
+    min-width: 0;
+    padding-inline: 10px;
+  }
+}

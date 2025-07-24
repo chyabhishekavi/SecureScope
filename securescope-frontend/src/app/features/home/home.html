@@ -1,0 +1,32 @@
+<section class="hero">
+  <div>
+    <mat-chip-set aria-label="SecureScope status">
+      <mat-chip>Backend ready</mat-chip>
+      <mat-chip>Frontend base</mat-chip>
+    </mat-chip-set>
+    <h1>Security scanning workspace for developer-friendly findings.</h1>
+    <p>
+      Start with a pasted snippet, move into ZIP uploads, and grow into GitHub repository scans with
+      masked findings, scores, and exportable reports.
+    </p>
+  </div>
+</section>
+
+<section class="scan-grid" aria-label="Scan entry points">
+  @for (card of scanCards; track card.title) {
+    <mat-card class="scan-card">
+      <mat-card-header>
+        <div class="icon-box" mat-card-avatar>
+          <mat-icon>{{ card.icon }}</mat-icon>
+        </div>
+        <mat-card-title>{{ card.title }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ card.description }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-flat-button color="primary" [routerLink]="card.path">{{ card.action }}</a>
+      </mat-card-actions>
+    </mat-card>
+  }
+</section>

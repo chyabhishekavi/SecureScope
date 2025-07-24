@@ -97,6 +97,65 @@ Expected response:
 }
 ```
 
+## Frontend Setup
+
+The Angular frontend project is located at:
+
+```text
+securescope-frontend
+```
+
+### Prerequisites
+
+- Node.js 20 or newer
+- npm
+
+### Install Dependencies
+
+From the frontend project folder:
+
+```powershell
+cd securescope-frontend
+npm install
+```
+
+On Windows PowerShell, if script execution blocks `npm`, use:
+
+```powershell
+npm.cmd install
+```
+
+### Run the Frontend
+
+```powershell
+cd securescope-frontend
+npm start
+```
+
+The Angular development server runs at:
+
+```text
+http://localhost:4200
+```
+
+### Validate the Frontend Build
+
+```powershell
+cd securescope-frontend
+npm run build
+```
+
+Current routes:
+
+- `/`
+- `/login`
+- `/register`
+- `/dashboard`
+- `/quick-scan`
+- `/projects`
+- `/findings`
+- `/reports`
+
 ## Planned Modules
 
 - Authentication and user accounts

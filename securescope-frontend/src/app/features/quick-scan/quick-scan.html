@@ -1,0 +1,23 @@
+<section class="page-heading">
+  <p>Quick Code Scan</p>
+  <h1>Paste code for a fast security review.</h1>
+  <span>
+    The scan editor will connect to the backend once the Quick Code Scan API is built.
+    Full secrets will stay masked in responses and reports.
+  </span>
+</section>
+
+<mat-card class="scan-editor">
+  <mat-card-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Code snippet</mat-label>
+      <textarea matInput rows="12" placeholder="Paste code here"></textarea>
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-flat-button color="primary" type="button">
+      <mat-icon>bolt</mat-icon>
+      Run scan
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -1,0 +1,44 @@
+.page-heading {
+  margin-bottom: 22px;
+}
+
+.page-heading p {
+  margin: 0 0 8px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-heading h1 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.page-heading span {
+  display: block;
+  max-width: 760px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.scan-editor {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  font-family: 'Courier New', monospace;
+}
+
+mat-card-actions {
+  padding: 0 16px 18px;
+}

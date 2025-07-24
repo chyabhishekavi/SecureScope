@@ -1,0 +1,28 @@
+<main class="auth-page">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Create your SecureScope account</mat-card-title>
+      <mat-card-subtitle>Prepare for authenticated scans and report history.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput autocomplete="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" autocomplete="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" autocomplete="new-password" />
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" type="button">Register</button>
+      <a mat-button routerLink="/login">Already have an account?</a>
+    </mat-card-actions>
+  </mat-card>
+</main>

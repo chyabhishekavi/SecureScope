@@ -1,0 +1,17 @@
+<aside class="sidebar">
+  <div class="sidebar-heading">Security workspace</div>
+
+  <mat-nav-list>
+    @for (item of navigationItems; track item.path) {
+      <a
+        mat-list-item
+        [routerLink]="item.path"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+      >
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        <span matListItemTitle>{{ item.label }}</span>
+      </a>
+    }
+  </mat-nav-list>
+</aside>
