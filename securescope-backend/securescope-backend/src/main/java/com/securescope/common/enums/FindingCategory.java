@@ -1,0 +1,10 @@
+package com.securescope.common.enums;
+
+public enum FindingCategory {
+	HARDCODED_SECRET,
+	VULNERABLE_DEPENDENCY,
+	RISKY_CODE_PATTERN,
+	MISSING_SECURITY_BEST_PRACTICE,
+	OWASP_TOP_TEN,
+	CONFIGURATION_RISK
+}

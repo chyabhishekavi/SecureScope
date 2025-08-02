@@ -97,6 +97,22 @@ Expected response:
 }
 ```
 
+### Backend Architecture
+
+The backend follows a feature-first package structure under `com.securescope`.
+
+Current backend packages:
+
+- `config`: application and web configuration
+- `common.response`: shared API response models
+- `common.dto`: shared DTOs used across backend layers
+- `common.exception`: custom exceptions and global exception handling
+- `common.enums`: scan, finding, severity, and risk enums
+- `common.util`: reusable utility helpers such as sensitive value masking
+- `health`: health check API
+
+Common response and exception handling are intentionally database-free. Persistence, JPA, PostgreSQL, and security will be added in later features.
+
 ## Frontend Setup
 
 The Angular frontend project is located at:
