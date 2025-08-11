@@ -97,6 +97,25 @@ Expected response:
 }
 ```
 
+### Quick Code Scan API
+
+```http
+POST /api/scans/quick-code
+```
+
+Sample request:
+
+```json
+{
+  "snippetName": "Auth sample",
+  "language": "JavaScript",
+  "fileName": "auth.js",
+  "codeContent": "const password = \"super-secret-password\";\nMessageDigest.getInstance(\"MD5\");"
+}
+```
+
+The first scanner engine version runs in memory and does not use a database. It detects hardcoded passwords, tokens, API keys, JWT secrets, private key blocks, weak hash usage, disabled CSRF, permissive CORS, and SQL string concatenation. Sensitive evidence is masked before returning results.
+
 ### Backend Architecture
 
 The backend follows a feature-first package structure under `com.securescope`.
@@ -110,6 +129,7 @@ Current backend packages:
 - `common.enums`: scan, finding, severity, and risk enums
 - `common.util`: reusable utility helpers such as sensitive value masking
 - `health`: health check API
+- `scanner`: quick code scanner orchestration, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
 
 Common response and exception handling are intentionally database-free. Persistence, JPA, PostgreSQL, and security will be added in later features.
 
