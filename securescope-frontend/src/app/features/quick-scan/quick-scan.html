@@ -2,22 +2,135 @@
   <p>Quick Code Scan</p>
   <h1>Paste code for a fast security review.</h1>
   <span>
-    The scan editor will connect to the backend once the Quick Code Scan API is built.
-    Full secrets will stay masked in responses and reports.
+    Submit a snippet to the Spring Boot scanner engine and review masked findings, OWASP mapping,
+    recommendations, and an initial security score.
   </span>
 </section>
 
-<mat-card class="scan-editor">
-  <mat-card-content>
-    <mat-form-field appearance="outline">
-      <mat-label>Code snippet</mat-label>
-      <textarea matInput rows="12" placeholder="Paste code here"></textarea>
-    </mat-form-field>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-flat-button color="primary" type="button">
-      <mat-icon>bolt</mat-icon>
-      Run scan
-    </button>
-  </mat-card-actions>
-</mat-card>
+<section class="scanner-layout">
+  <mat-card class="scan-editor">
+    <mat-card-content>
+      <form [formGroup]="quickScanForm" (ngSubmit)="runScan()" class="scan-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Snippet Name</mat-label>
+            <input matInput formControlName="snippetName" />
+            @if (quickScanForm.controls.snippetName.hasError('required')) {
+              <mat-error>Snippet name is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Language</mat-label>
+            <mat-select formControlName="language">
+              @for (language of languages; track language) {
+                <mat-option [value]="language">{{ language }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="file-field">
+            <mat-label>File Name</mat-label>
+            <input matInput formControlName="fileName" />
+            @if (quickScanForm.controls.fileName.hasError('required')) {
+              <mat-error>File name is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Code Content</mat-label>
+          <textarea matInput rows="14" formControlName="codeContent"></textarea>
+          @if (quickScanForm.controls.codeContent.hasError('required')) {
+            <mat-error>Code content is required</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="security-disclaimer">
+          SecureScope performs static checks and does not replace manual security review or penetration testing.
+        </div>
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading">
+            @if (isLoading) {
+              <mat-spinner diameter="20" />
+            } @else {
+              <mat-icon>bolt</mat-icon>
+            }
+            Run Scan
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (scanResult) {
+    <section class="result-panel" aria-label="Scan result">
+      <div class="score-grid">
+        <mat-card class="metric-card">
+          <span>Security Score</span>
+          <strong>{{ scanResult.securityScore }}</strong>
+        </mat-card>
+        <mat-card class="metric-card">
+          <span>Risk Level</span>
+          <strong>{{ scanResult.riskLevel }}</strong>
+        </mat-card>
+        <mat-card class="metric-card">
+          <span>Total Findings</span>
+          <strong>{{ scanResult.totalFindings }}</strong>
+        </mat-card>
+      </div>
+
+      <mat-card class="findings-card">
+        <mat-card-header>
+          <mat-card-title>Findings</mat-card-title>
+          <mat-card-subtitle>Scan ID: {{ scanResult.scanId }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          @if (scanResult.findings.length > 0) {
+            <div class="table-wrap">
+              <table mat-table [dataSource]="scanResult.findings">
+                <ng-container matColumnDef="severity">
+                  <th mat-header-cell *matHeaderCellDef>Severity</th>
+                  <td mat-cell *matCellDef="let finding">
+                    <span [class]="severityClass(finding)">
+                      {{ finding.severity }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="title">
+                  <th mat-header-cell *matHeaderCellDef>Title</th>
+                  <td mat-cell *matCellDef="let finding">{{ finding.title }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="owaspCategory">
+                  <th mat-header-cell *matHeaderCellDef>OWASP Category</th>
+                  <td mat-cell *matCellDef="let finding">{{ finding.owaspCategory }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="filePath">
+                  <th mat-header-cell *matHeaderCellDef>File Path</th>
+                  <td mat-cell *matCellDef="let finding">{{ finding.filePath }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="recommendation">
+                  <th mat-header-cell *matHeaderCellDef>Recommendation</th>
+                  <td mat-cell *matCellDef="let finding">{{ finding.recommendation }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              </table>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <mat-icon>verified_user</mat-icon>
+              <p>No findings were detected by the current static rules.</p>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+</section>

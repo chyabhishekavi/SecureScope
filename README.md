@@ -116,6 +116,30 @@ Sample request:
 
 The first scanner engine version runs in memory and does not use a database. It detects hardcoded passwords, tokens, API keys, JWT secrets, private key blocks, weak hash usage, disabled CSRF, permissive CORS, and SQL string concatenation. Sensitive evidence is masked before returning results.
 
+### Quick Code Scan UI
+
+The Angular frontend includes a `/quick-scan` page that connects to:
+
+```text
+http://localhost:8080/api/scans/quick-code
+```
+
+The page includes fields for snippet name, language, file name, and code content. Results show the security score, risk level, total findings, and a findings table with severity, title, OWASP category, file path, and recommendation.
+
+Start the backend before running the frontend scan page:
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd spring-boot:run
+```
+
+Then run the frontend:
+
+```powershell
+cd securescope-frontend
+npm start
+```
+
 ### Backend Architecture
 
 The backend follows a feature-first package structure under `com.securescope`.

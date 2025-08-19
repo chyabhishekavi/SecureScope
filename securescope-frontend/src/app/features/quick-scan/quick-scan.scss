@@ -31,6 +31,22 @@
   box-shadow: none;
 }
 
+.scanner-layout {
+  display: grid;
+  gap: 24px;
+}
+
+.scan-form {
+  display: grid;
+  gap: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.8fr 1.1fr;
+  gap: 16px;
+}
+
 mat-form-field {
   width: 100%;
 }
@@ -39,6 +55,139 @@ textarea {
   font-family: 'Courier New', monospace;
 }
 
-mat-card-actions {
-  padding: 0 16px 18px;
+.security-disclaimer {
+  padding: 14px 16px;
+  border-left: 4px solid #0f766e;
+  border-radius: 8px;
+  background: #f0fdfa;
+  color: #115e59;
+  line-height: 1.6;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-actions button {
+  min-width: 132px;
+}
+
+.form-actions mat-spinner,
+.form-actions mat-icon {
+  margin-right: 8px;
+}
+
+.result-panel {
+  display: grid;
+  gap: 20px;
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-card {
+  padding: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.metric-card span {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 10px;
+  color: #0f172a;
+  font-size: 2rem;
+}
+
+.findings-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  color: #334155;
+  font-weight: 800;
+}
+
+td {
+  color: #475569;
+  vertical-align: top;
+}
+
+.severity-pill {
+  display: inline-block;
+  min-width: 72px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.severity-critical {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.severity-high {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.severity-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.severity-low {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.severity-info {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  padding: 36px 16px;
+  color: #475569;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  width: 48px;
+  height: 48px;
+  color: #0f766e;
+  font-size: 48px;
+}
+
+@media (max-width: 980px) {
+  .form-grid,
+  .score-grid {
+    grid-template-columns: 1fr;
+  }
 }
