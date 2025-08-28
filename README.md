@@ -82,6 +82,41 @@ cd securescope-backend/securescope-backend
 .\mvnw.cmd clean test
 ```
 
+### Database Setup
+
+SecureScope backend is configured for PostgreSQL.
+
+Default local database settings:
+
+```text
+Database: securescope_db
+Host: localhost
+Port: 5432
+Username: postgres
+Password: postgres
+```
+
+Create the local database before running persistence-backed features:
+
+```sql
+CREATE DATABASE securescope_db;
+```
+
+The backend datasource is configured in:
+
+```text
+securescope-backend/securescope-backend/src/main/resources/application.yml
+```
+
+Run PostgreSQL locally, then start the backend:
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd spring-boot:run
+```
+
+Hibernate is currently set to `ddl-auto: update` for local development so the first tables can be created from the JPA entities. Add a migration tool before production deployment.
+
 ### Health Check API
 
 ```http
@@ -153,9 +188,11 @@ Current backend packages:
 - `common.enums`: scan, finding, severity, and risk enums
 - `common.util`: reusable utility helpers such as sensitive value masking
 - `health`: health check API
+- `persistence.entity`: JPA entities for users, projects, scans, and findings
+- `persistence.repository`: Spring Data JPA repositories for persistence access
 - `scanner`: quick code scanner orchestration, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
 
-Common response and exception handling are intentionally database-free. Persistence, JPA, PostgreSQL, and security will be added in later features.
+JWT security will be added in a later feature.
 
 ## Frontend Setup
 
