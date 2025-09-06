@@ -13,3 +13,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+security:
+  jwt:
+    secret: secure-scope-local-development-secret-key-change-before-production
+    expiration-minutes: 120

@@ -132,6 +132,60 @@ Expected response:
 }
 ```
 
+### Authentication API
+
+SecureScope uses Spring Security with BCrypt password hashing and JWT bearer tokens.
+
+Public endpoints:
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/health`
+
+Protected endpoint:
+
+- `GET /api/auth/me`
+
+All other API routes require an `Authorization: Bearer <token>` header.
+
+Register request:
+
+```json
+{
+  "name": "SecureScope Developer",
+  "email": "developer@example.com",
+  "password": "password123"
+}
+```
+
+Login request:
+
+```json
+{
+  "email": "developer@example.com",
+  "password": "password123"
+}
+```
+
+Successful register and login responses include a JWT token and user details:
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "jwt-token",
+    "tokenType": "Bearer",
+    "user": {
+      "id": "user-id",
+      "name": "SecureScope Developer",
+      "email": "developer@example.com"
+    }
+  },
+  "timestamp": "..."
+}
+```
+
 ### Quick Code Scan API
 
 ```http
@@ -181,6 +235,7 @@ The backend follows a feature-first package structure under `com.securescope`.
 
 Current backend packages:
 
+- `auth`: registration, login, current-user API, JWT service, and authentication filter
 - `config`: application and web configuration
 - `common.response`: shared API response models
 - `common.dto`: shared DTOs used across backend layers
@@ -191,8 +246,6 @@ Current backend packages:
 - `persistence.entity`: JPA entities for users, projects, scans, and findings
 - `persistence.repository`: Spring Data JPA repositories for persistence access
 - `scanner`: quick code scanner orchestration, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
-
-JWT security will be added in a later feature.
 
 ## Frontend Setup
 
