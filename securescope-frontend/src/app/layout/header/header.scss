@@ -35,8 +35,19 @@
 }
 
 a[mat-button],
-a[mat-flat-button] {
+a[mat-flat-button],
+button[mat-button] {
   margin-left: 8px;
+}
+
+.user-chip {
+  max-width: 220px;
+  overflow: hidden;
+  color: #475569;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
@@ -45,8 +56,13 @@ a[mat-flat-button] {
   }
 
   a[mat-button],
-  a[mat-flat-button] {
+  a[mat-flat-button],
+  button[mat-button] {
     min-width: 0;
     padding-inline: 10px;
+  }
+
+  .user-chip {
+    display: none;
   }
 }

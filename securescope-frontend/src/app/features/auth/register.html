@@ -4,25 +4,47 @@
       <mat-card-title>Create your SecureScope account</mat-card-title>
       <mat-card-subtitle>Prepare for authenticated scans and report history.</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
-      <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
-        <input matInput autocomplete="name" />
-      </mat-form-field>
+    <form [formGroup]="registerForm" (ngSubmit)="submit()">
+      <mat-card-content>
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput autocomplete="name" formControlName="name" />
+          @if (registerForm.controls.name.hasError('required')) {
+            <mat-error>Name is required</mat-error>
+          }
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" autocomplete="email" />
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" autocomplete="email" formControlName="email" />
+          @if (registerForm.controls.email.hasError('required')) {
+            <mat-error>Email is required</mat-error>
+          }
+          @if (registerForm.controls.email.hasError('email')) {
+            <mat-error>Enter a valid email</mat-error>
+          }
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput type="password" autocomplete="new-password" />
-      </mat-form-field>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-flat-button color="primary" type="button">Register</button>
-      <a mat-button routerLink="/login">Already have an account?</a>
-    </mat-card-actions>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" autocomplete="new-password" formControlName="password" />
+          @if (registerForm.controls.password.hasError('required')) {
+            <mat-error>Password is required</mat-error>
+          }
+          @if (registerForm.controls.password.hasError('minlength')) {
+            <mat-error>Password must be at least 8 characters</mat-error>
+          }
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" type="submit" [disabled]="isLoading">
+          @if (isLoading) {
+            <mat-spinner diameter="18" />
+          }
+          Register
+        </button>
+        <a mat-button routerLink="/login">Already have an account?</a>
+      </mat-card-actions>
+    </form>
   </mat-card>
 </main>

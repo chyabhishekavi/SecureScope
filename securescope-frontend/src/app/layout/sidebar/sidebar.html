@@ -14,4 +14,15 @@
       </a>
     }
   </mat-nav-list>
+
+  @if (authService.currentUser(); as user) {
+    <div class="sidebar-user">
+      <span>{{ user.name }}</span>
+      <small>{{ user.email }}</small>
+      <button mat-stroked-button type="button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </div>
+  }
 </aside>

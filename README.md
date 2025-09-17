@@ -306,6 +306,29 @@ Current routes:
 - `/findings`
 - `/reports`
 
+### Frontend Authentication Flow
+
+The Angular frontend includes login and register pages that call the Spring Boot authentication API:
+
+- `POST http://localhost:8080/api/auth/register`
+- `POST http://localhost:8080/api/auth/login`
+
+After successful login or registration, the JWT token and user details are stored in `localStorage`. The frontend auth interceptor attaches the token to outgoing API requests with:
+
+```text
+Authorization: Bearer <token>
+```
+
+Protected frontend routes redirect unauthenticated users to `/login`:
+
+- `/dashboard`
+- `/projects`
+- `/quick-scan`
+- `/findings`
+- `/reports`
+
+Logged-in users who open `/login` or `/register` are redirected to `/dashboard`. Header and sidebar logout actions clear the stored session.
+
 ## Planned Modules
 
 - Authentication and user accounts

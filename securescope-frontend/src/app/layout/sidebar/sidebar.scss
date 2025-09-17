@@ -31,3 +31,34 @@ a[mat-list-item] {
 .active-link mat-icon {
   color: #ffffff;
 }
+
+.sidebar-user {
+  display: grid;
+  gap: 6px;
+  margin: 24px 8px 0;
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.52);
+}
+
+.sidebar-user span,
+.sidebar-user small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-user span {
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+.sidebar-user small {
+  color: #94a3b8;
+}
+
+.sidebar-user button {
+  margin-top: 8px;
+  color: #e2e8f0;
+}

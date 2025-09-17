@@ -8,6 +8,8 @@ import { Projects } from './features/projects/projects';
 import { QuickScan } from './features/quick-scan/quick-scan';
 import { Reports } from './features/reports/reports';
 import { MainLayout } from './layout/main-layout/main-layout';
+import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
@@ -15,14 +17,14 @@ export const routes: Routes = [
     component: MainLayout,
     children: [
       { path: '', component: Home, title: 'SecureScope' },
-      { path: 'dashboard', component: Dashboard, title: 'Dashboard | SecureScope' },
-      { path: 'quick-scan', component: QuickScan, title: 'Quick Scan | SecureScope' },
-      { path: 'projects', component: Projects, title: 'Projects | SecureScope' },
-      { path: 'findings', component: Findings, title: 'Findings | SecureScope' },
-      { path: 'reports', component: Reports, title: 'Reports | SecureScope' }
+      { path: 'dashboard', component: Dashboard, title: 'Dashboard | SecureScope', canActivate: [authGuard] },
+      { path: 'quick-scan', component: QuickScan, title: 'Quick Scan | SecureScope', canActivate: [authGuard] },
+      { path: 'projects', component: Projects, title: 'Projects | SecureScope', canActivate: [authGuard] },
+      { path: 'findings', component: Findings, title: 'Findings | SecureScope', canActivate: [authGuard] },
+      { path: 'reports', component: Reports, title: 'Reports | SecureScope', canActivate: [authGuard] }
     ]
   },
-  { path: 'login', component: Login, title: 'Login | SecureScope' },
-  { path: 'register', component: Register, title: 'Register | SecureScope' },
+  { path: 'login', component: Login, title: 'Login | SecureScope', canActivate: [guestGuard] },
+  { path: 'register', component: Register, title: 'Register | SecureScope', canActivate: [guestGuard] },
   { path: '**', redirectTo: '' }
 ];
