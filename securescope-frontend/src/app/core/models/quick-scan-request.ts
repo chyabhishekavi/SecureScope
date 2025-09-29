@@ -3,4 +3,5 @@ export interface QuickScanRequest {
   language: string;
   fileName: string;
   codeContent: string;
+  projectId?: string | null;
 }

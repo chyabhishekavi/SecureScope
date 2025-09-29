@@ -79,12 +79,16 @@
           <span>Total Findings</span>
           <strong>{{ scanResult.totalFindings }}</strong>
         </mat-card>
+        <mat-card class="metric-card scan-id-card">
+          <span>Saved Scan ID</span>
+          <strong>{{ scanResult.scanId }}</strong>
+        </mat-card>
       </div>
 
       <mat-card class="findings-card">
         <mat-card-header>
           <mat-card-title>Findings</mat-card-title>
-          <mat-card-subtitle>Scan ID: {{ scanResult.scanId }}</mat-card-subtitle>
+          <mat-card-subtitle>Status: {{ scanResult.status }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
           @if (scanResult.findings.length > 0) {

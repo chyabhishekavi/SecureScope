@@ -10,5 +10,7 @@ public interface FindingRepository extends JpaRepository<Finding, UUID> {
 
 	List<Finding> findByScanId(UUID scanId);
 
+	List<Finding> findByScanIdOrderByCreatedAtAsc(UUID scanId);
+
 	List<Finding> findBySeverity(Severity severity);
 }

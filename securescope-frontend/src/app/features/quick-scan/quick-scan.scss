@@ -85,7 +85,7 @@ textarea {
 
 .score-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -109,6 +109,13 @@ textarea {
   margin-top: 10px;
   color: #0f172a;
   font-size: 2rem;
+}
+
+.scan-id-card strong {
+  overflow-wrap: anywhere;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .findings-card {

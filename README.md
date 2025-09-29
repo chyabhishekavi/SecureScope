@@ -192,6 +192,8 @@ Successful register and login responses include a JWT token and user details:
 POST /api/scans/quick-code
 ```
 
+This endpoint requires a JWT bearer token. Each quick scan is saved to PostgreSQL with the logged-in user as the owner. If `projectId` is provided, the scan is linked to that project only when the project belongs to the same user. If `projectId` is omitted or `null`, SecureScope saves the scan as a standalone quick scan.
+
 Sample request:
 
 ```json
@@ -199,11 +201,35 @@ Sample request:
   "snippetName": "Auth sample",
   "language": "JavaScript",
   "fileName": "auth.js",
-  "codeContent": "const password = \"super-secret-password\";\nMessageDigest.getInstance(\"MD5\");"
+  "codeContent": "const password = \"super-secret-password\";\nMessageDigest.getInstance(\"MD5\");",
+  "projectId": null
 }
 ```
 
-The first scanner engine version runs in memory and does not use a database. It detects hardcoded passwords, tokens, API keys, JWT secrets, private key blocks, weak hash usage, disabled CSRF, permissive CORS, and SQL string concatenation. Sensitive evidence is masked before returning results.
+The scanner detects hardcoded passwords, tokens, API keys, JWT secrets, private key blocks, weak hash usage, disabled CSRF, permissive CORS, and SQL string concatenation. Sensitive evidence is masked before results are returned or saved.
+
+Sample response data:
+
+```json
+{
+  "scanId": "0f7b5ea7-2f09-4a5b-9858-0e2e35f0b71b",
+  "status": "COMPLETED",
+  "securityScore": 50,
+  "riskLevel": "MODERATE",
+  "totalFindings": 2,
+  "findings": []
+}
+```
+
+Saved scan APIs:
+
+```http
+GET /api/scans/{scanId}
+GET /api/scans/{scanId}/findings
+GET /api/scans/my-scans
+```
+
+Only the user who owns a scan can view the saved scan or its findings.
 
 ### Quick Code Scan UI
 
@@ -214,6 +240,8 @@ http://localhost:8080/api/scans/quick-code
 ```
 
 The page includes fields for snippet name, language, file name, and code content. Results show the security score, risk level, total findings, and a findings table with severity, title, OWASP category, file path, and recommendation.
+
+After a successful scan, the page also shows the saved PostgreSQL scan ID returned by the backend.
 
 Start the backend before running the frontend scan page:
 
