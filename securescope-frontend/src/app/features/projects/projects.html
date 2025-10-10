@@ -1,0 +1,81 @@
+<section class="page-heading">
+  <div>
+    <p>Projects</p>
+    <h1>Manage security scan targets.</h1>
+    <span>Create project records for ZIP uploads and GitHub repositories, then review linked scan history.</span>
+  </div>
+
+  <a mat-flat-button color="primary" routerLink="/projects/new">
+    <mat-icon>add</mat-icon>
+    New Project
+  </a>
+</section>
+
+<mat-card class="projects-card">
+  <mat-card-content>
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="36" />
+      </div>
+    } @else if (projects.length > 0) {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="projects">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let project">
+              <button mat-button type="button" (click)="viewProject(project)">
+                {{ project.name }}
+              </button>
+              <small>{{ project.description || 'No description added' }}</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="sourceType">
+            <th mat-header-cell *matHeaderCellDef>Source</th>
+            <td mat-cell *matCellDef="let project">{{ project.sourceType }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="technology">
+            <th mat-header-cell *matHeaderCellDef>Technology</th>
+            <td mat-cell *matCellDef="let project">{{ project.technology || 'Not specified' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="scans">
+            <th mat-header-cell *matHeaderCellDef>Scans</th>
+            <td mat-cell *matCellDef="let project">{{ project.scanHistory.length }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let project">
+              <div class="row-actions">
+                <a mat-icon-button [routerLink]="['/projects', project.id]" aria-label="View project">
+                  <mat-icon>visibility</mat-icon>
+                </a>
+                <a mat-icon-button [routerLink]="['/projects', project.id, 'edit']" aria-label="Edit project">
+                  <mat-icon>edit</mat-icon>
+                </a>
+                <button mat-icon-button type="button" (click)="deleteProject(project)" aria-label="Delete project">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <mat-icon>folder_open</mat-icon>
+        <h2>No projects yet</h2>
+        <p>Create your first SecureScope project to organize scans by application, repository, or uploaded archive.</p>
+        <a mat-flat-button color="primary" routerLink="/projects/new">
+          <mat-icon>add</mat-icon>
+          Create Project
+        </a>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

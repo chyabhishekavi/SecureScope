@@ -4,6 +4,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { MaterialModule } from '../../shared/material/material.module';
 
 interface NavigationItem {
+  exact: boolean;
   icon: string;
   label: string;
   path: string;
@@ -20,12 +21,12 @@ export class Sidebar {
   private readonly router = inject(Router);
 
   protected readonly navigationItems: NavigationItem[] = [
-    { icon: 'home', label: 'Home', path: '/' },
-    { icon: 'dashboard', label: 'Dashboard', path: '/dashboard' },
-    { icon: 'bolt', label: 'Quick Scan', path: '/quick-scan' },
-    { icon: 'folder_open', label: 'Projects', path: '/projects' },
-    { icon: 'bug_report', label: 'Findings', path: '/findings' },
-    { icon: 'description', label: 'Reports', path: '/reports' }
+    { exact: true, icon: 'home', label: 'Home', path: '/' },
+    { exact: false, icon: 'dashboard', label: 'Dashboard', path: '/dashboard' },
+    { exact: false, icon: 'bolt', label: 'Quick Scan', path: '/quick-scan' },
+    { exact: false, icon: 'folder_open', label: 'Projects', path: '/projects' },
+    { exact: false, icon: 'bug_report', label: 'Findings', path: '/findings' },
+    { exact: false, icon: 'description', label: 'Reports', path: '/reports' }
   ];
 
   protected logout(): void {

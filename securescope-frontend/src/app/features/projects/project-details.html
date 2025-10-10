@@ -1,0 +1,112 @@
+@if (isLoading) {
+  <div class="loading-state">
+    <mat-spinner diameter="36" />
+  </div>
+} @else if (project) {
+  <section class="page-heading">
+    <div>
+      <a mat-button routerLink="/projects">
+        <mat-icon>arrow_back</mat-icon>
+        Projects
+      </a>
+      <p>Project Details</p>
+      <h1>{{ project.name }}</h1>
+      <span>{{ project.description || 'No description added yet.' }}</span>
+    </div>
+
+    <div class="heading-actions">
+      <a mat-stroked-button [routerLink]="['/projects', project.id, 'edit']">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </a>
+      <button mat-stroked-button type="button" (click)="deleteProject()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <mat-card class="summary-card">
+      <span>Source Type</span>
+      <strong>{{ project.sourceType }}</strong>
+    </mat-card>
+    <mat-card class="summary-card">
+      <span>Technology</span>
+      <strong>{{ project.technology || 'Not specified' }}</strong>
+    </mat-card>
+    <mat-card class="summary-card">
+      <span>Total Scans</span>
+      <strong>{{ project.scanHistory.length }}</strong>
+    </mat-card>
+  </section>
+
+  <mat-card class="details-card">
+    <mat-card-header>
+      <mat-card-title>Repository</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (project.githubUrl) {
+        <a [href]="project.githubUrl" target="_blank" rel="noreferrer">{{ project.githubUrl }}</a>
+      } @else {
+        <p>No GitHub repository URL added.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="details-card">
+    <mat-card-header>
+      <mat-card-title>Scan History</mat-card-title>
+      <mat-card-subtitle>Scans linked to this project</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (project.scanHistory.length > 0) {
+        <div class="table-wrap">
+          <table mat-table [dataSource]="project.scanHistory">
+            <ng-container matColumnDef="scanName">
+              <th mat-header-cell *matHeaderCellDef>Scan</th>
+              <td mat-cell *matCellDef="let scan">{{ scan.scanName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let scan">{{ scan.status }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="score">
+              <th mat-header-cell *matHeaderCellDef>Score</th>
+              <td mat-cell *matCellDef="let scan">{{ scan.securityScore }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="risk">
+              <th mat-header-cell *matHeaderCellDef>Risk</th>
+              <td mat-cell *matCellDef="let scan">
+                <span [class]="riskClass(scan)">{{ scan.riskLevel }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="findings">
+              <th mat-header-cell *matHeaderCellDef>Findings</th>
+              <td mat-cell *matCellDef="let scan">{{ scan.totalFindings }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="completedAt">
+              <th mat-header-cell *matHeaderCellDef>Completed</th>
+              <td mat-cell *matCellDef="let scan">
+                {{ scan.completedAt ? (scan.completedAt | date: 'medium') : 'Not completed' }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <mat-icon>history</mat-icon>
+          <p>No scans are linked to this project yet.</p>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+}

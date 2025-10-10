@@ -21,12 +21,18 @@ public class Project extends AuditableEntity {
 	@Column(nullable = false, length = 140)
 	private String name;
 
+	@Column(length = 800)
+	private String description;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 40)
 	private ScanSourceType sourceType;
 
+	@Column(length = 120)
+	private String technology;
+
 	@Column(length = 500)
-	private String repositoryUrl;
+	private String githubUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "owner_id", nullable = false)
@@ -43,6 +49,14 @@ public class Project extends AuditableEntity {
 		this.name = name;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public ScanSourceType getSourceType() {
 		return sourceType;
 	}
@@ -51,12 +65,20 @@ public class Project extends AuditableEntity {
 		this.sourceType = sourceType;
 	}
 
-	public String getRepositoryUrl() {
-		return repositoryUrl;
+	public String getTechnology() {
+		return technology;
 	}
 
-	public void setRepositoryUrl(String repositoryUrl) {
-		this.repositoryUrl = repositoryUrl;
+	public void setTechnology(String technology) {
+		this.technology = technology;
+	}
+
+	public String getGithubUrl() {
+		return githubUrl;
+	}
+
+	public void setGithubUrl(String githubUrl) {
+		this.githubUrl = githubUrl;
 	}
 
 	public User getOwner() {

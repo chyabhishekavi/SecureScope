@@ -231,6 +231,32 @@ GET /api/scans/my-scans
 
 Only the user who owns a scan can view the saved scan or its findings.
 
+### Projects API
+
+Project APIs require a JWT bearer token and are scoped to the logged-in user. Users can only create, view, update, or delete their own projects.
+
+```http
+POST /api/projects
+GET /api/projects
+GET /api/projects/{projectId}
+PUT /api/projects/{projectId}
+DELETE /api/projects/{projectId}
+```
+
+Project request:
+
+```json
+{
+  "name": "SecureScope Web App",
+  "description": "Angular and Spring Boot security scanning workspace",
+  "sourceType": "GITHUB_REPOSITORY",
+  "technology": "Angular, Spring Boot, PostgreSQL",
+  "githubUrl": "https://github.com/example/securescope"
+}
+```
+
+Project responses include scan history for scans linked to the project. Quick Code Scan can link to a project by sending the optional `projectId` field in the scan request.
+
 ### Quick Code Scan UI
 
 The Angular frontend includes a `/quick-scan` page that connects to:
@@ -273,6 +299,7 @@ Current backend packages:
 - `health`: health check API
 - `persistence.entity`: JPA entities for users, projects, scans, and findings
 - `persistence.repository`: Spring Data JPA repositories for persistence access
+- `project`: owner-scoped project CRUD APIs, DTOs, and project scan history responses
 - `scanner`: quick code scanner orchestration, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
 
 ## Frontend Setup
@@ -331,6 +358,9 @@ Current routes:
 - `/dashboard`
 - `/quick-scan`
 - `/projects`
+- `/projects/new`
+- `/projects/:projectId`
+- `/projects/:projectId/edit`
 - `/findings`
 - `/reports`
 
@@ -351,6 +381,9 @@ Protected frontend routes redirect unauthenticated users to `/login`:
 
 - `/dashboard`
 - `/projects`
+- `/projects/new`
+- `/projects/:projectId`
+- `/projects/:projectId/edit`
 - `/quick-scan`
 - `/findings`
 - `/reports`

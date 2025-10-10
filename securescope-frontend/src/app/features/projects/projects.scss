@@ -1,0 +1,99 @@
+.page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.page-heading p {
+  margin: 0 0 8px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-heading h1 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.page-heading span {
+  display: block;
+  max-width: 720px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.projects-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  color: #334155;
+  font-weight: 800;
+}
+
+td {
+  color: #475569;
+  vertical-align: middle;
+}
+
+td small {
+  display: block;
+  max-width: 440px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.row-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.loading-state,
+.empty-state {
+  display: grid;
+  justify-items: center;
+  padding: 42px 16px;
+  color: #475569;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  width: 48px;
+  height: 48px;
+  color: #0f766e;
+  font-size: 48px;
+}
+
+.empty-state h2 {
+  margin: 14px 0 8px;
+  color: #0f172a;
+}
+
+.empty-state p {
+  max-width: 520px;
+  margin: 0 0 18px;
+  line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+  .page-heading {
+    display: grid;
+  }
+}

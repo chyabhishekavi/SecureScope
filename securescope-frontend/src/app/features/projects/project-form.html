@@ -1,0 +1,60 @@
+<section class="page-heading">
+  <a mat-button routerLink="/projects">
+    <mat-icon>arrow_back</mat-icon>
+    Projects
+  </a>
+  <p>{{ isEditMode ? 'Edit Project' : 'Create Project' }}</p>
+  <h1>{{ isEditMode ? 'Update scan target details.' : 'Add a new scan target.' }}</h1>
+</section>
+
+<mat-card class="form-card">
+  <mat-card-content>
+    <form [formGroup]="projectForm" (ngSubmit)="save()" class="project-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+        @if (projectForm.controls.name.hasError('required')) {
+          <mat-error>Project name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="4" formControlName="description"></textarea>
+      </mat-form-field>
+
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Source Type</mat-label>
+          <mat-select formControlName="sourceType">
+            @for (sourceType of sourceTypes; track sourceType.value) {
+              <mat-option [value]="sourceType.value">{{ sourceType.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Technology</mat-label>
+          <input matInput formControlName="technology" placeholder="Angular, Spring Boot, PostgreSQL" />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>GitHub URL</mat-label>
+        <input matInput formControlName="githubUrl" placeholder="https://github.com/example/repository" />
+      </mat-form-field>
+
+      <div class="form-actions">
+        <a mat-button routerLink="/projects">Cancel</a>
+        <button mat-flat-button color="primary" type="submit" [disabled]="isLoading">
+          @if (isLoading) {
+            <mat-spinner diameter="20" />
+          } @else {
+            <mat-icon>save</mat-icon>
+          }
+          Save Project
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
