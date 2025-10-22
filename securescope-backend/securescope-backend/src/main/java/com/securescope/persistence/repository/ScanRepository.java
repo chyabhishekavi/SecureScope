@@ -19,5 +19,7 @@ public interface ScanRepository extends JpaRepository<Scan, UUID> {
 
 	List<Scan> findByRequestedByEmailOrderByCreatedAtDesc(String email);
 
+	List<Scan> findTop5ByRequestedByEmailOrderByCreatedAtDesc(String email);
+
 	List<Scan> findByStatus(ScanStatus status);
 }

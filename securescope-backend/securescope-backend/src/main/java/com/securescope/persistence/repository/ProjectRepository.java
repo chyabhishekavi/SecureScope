@@ -12,5 +12,7 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
 	List<Project> findByOwnerEmailOrderByCreatedAtDesc(String email);
 
+	long countByOwnerEmail(String email);
+
 	Optional<Project> findByIdAndOwnerEmail(UUID id, String email);
 }

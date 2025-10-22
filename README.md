@@ -33,7 +33,7 @@ SecureScope will allow users to scan source code and project artifacts for commo
 - Angular Material
 - RxJS
 - SCSS
-- Chart.js or ApexCharts
+- Chart.js
 
 ### Backend
 
@@ -257,6 +257,19 @@ Project request:
 
 Project responses include scan history for scans linked to the project. Quick Code Scan can link to a project by sending the optional `projectId` field in the scan request.
 
+### Dashboard API
+
+Dashboard APIs require a JWT bearer token and return metrics only for the logged-in user.
+
+```http
+GET /api/dashboard/summary
+GET /api/dashboard/severity-summary
+GET /api/dashboard/owasp-summary
+GET /api/dashboard/score-trend
+```
+
+The summary endpoint returns total projects, total scans, average security score, critical findings, high findings, and recent scans. The summary endpoints power the Angular security dashboard cards, severity chart, OWASP category chart, and recent scans table.
+
 ### Quick Code Scan UI
 
 The Angular frontend includes a `/quick-scan` page that connects to:
@@ -296,6 +309,7 @@ Current backend packages:
 - `common.exception`: custom exceptions and global exception handling
 - `common.enums`: scan, finding, severity, and risk enums
 - `common.util`: reusable utility helpers such as sensitive value masking
+- `dashboard`: user-scoped security summary, severity, OWASP, and score trend APIs
 - `health`: health check API
 - `persistence.entity`: JPA entities for users, projects, scans, and findings
 - `persistence.repository`: Spring Data JPA repositories for persistence access
@@ -389,6 +403,19 @@ Protected frontend routes redirect unauthenticated users to `/login`:
 - `/reports`
 
 Logged-in users who open `/login` or `/register` are redirected to `/dashboard`. Header and sidebar logout actions clear the stored session.
+
+### Security Dashboard UI
+
+The Angular `/dashboard` page calls the dashboard APIs and displays:
+
+- Total Projects
+- Total Scans
+- Average Security Score
+- Critical Findings
+- High Findings
+- Severity breakdown chart
+- OWASP category breakdown chart
+- Recent scans table
 
 ## Planned Modules
 
