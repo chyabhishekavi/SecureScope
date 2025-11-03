@@ -1,0 +1,84 @@
+@if (isLoading) {
+  <div class="loading-state">
+    <mat-spinner diameter="38" />
+  </div>
+} @else if (finding) {
+  <section class="page-heading">
+    <a mat-button routerLink="/findings">
+      <mat-icon>arrow_back</mat-icon>
+      Findings
+    </a>
+    <p>Finding Details</p>
+    <h1>{{ finding.title }}</h1>
+    <span>{{ finding.description }}</span>
+  </section>
+
+  <section class="summary-grid">
+    <mat-card class="summary-card">
+      <span>Severity</span>
+      <mat-chip [class]="severityClass(finding)">{{ finding.severity }}</mat-chip>
+    </mat-card>
+    <mat-card class="summary-card">
+      <span>Status</span>
+      <mat-form-field appearance="outline">
+        <mat-select [value]="finding.status" (selectionChange)="updateStatus($event.value)">
+          @for (status of statuses; track status) {
+            <mat-option [value]="status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mat-card>
+    <mat-card class="summary-card">
+      <span>OWASP Category</span>
+      <strong>{{ finding.owaspCategory || 'Unmapped' }}</strong>
+    </mat-card>
+  </section>
+
+  <section class="details-grid">
+    <mat-card class="details-card">
+      <mat-card-header>
+        <mat-card-title>Location</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <dl>
+          <div>
+            <dt>Scan</dt>
+            <dd>{{ finding.scanName }}</dd>
+          </div>
+          <div>
+            <dt>File Path</dt>
+            <dd>{{ finding.filePath || 'No file path captured' }}</dd>
+          </div>
+          <div>
+            <dt>Line Number</dt>
+            <dd>{{ finding.lineNumber || 'Not available' }}</dd>
+          </div>
+          <div>
+            <dt>Category</dt>
+            <dd>{{ finding.category }}</dd>
+          </div>
+        </dl>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="details-card">
+      <mat-card-header>
+        <mat-card-title>Masked Evidence</mat-card-title>
+        <mat-card-subtitle>Sensitive values are intentionally hidden</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <pre>{{ finding.evidence || 'No evidence captured' }}</pre>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <mat-card class="recommendation-card">
+    <mat-card-header>
+      <mat-card-title>Recommendation</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ finding.recommendation || 'No recommendation available.' }}</p>
+      <small>Last updated {{ finding.updatedAt | date: 'medium' }}</small>
+    </mat-card-content>
+  </mat-card>
+}

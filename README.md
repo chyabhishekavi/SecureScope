@@ -257,6 +257,40 @@ Project request:
 
 Project responses include scan history for scans linked to the project. Quick Code Scan can link to a project by sending the optional `projectId` field in the scan request.
 
+### Findings API
+
+Finding APIs require a JWT bearer token and return data only for findings owned by the logged-in user through their scans.
+
+```http
+GET /api/findings
+GET /api/findings/{findingId}
+PATCH /api/findings/{findingId}/status
+```
+
+Supported finding filters:
+
+- `severity`
+- `category`
+- `owaspCategory`
+- `status`
+
+Supported finding statuses:
+
+- `OPEN`
+- `FIXED`
+- `IGNORED`
+- `FALSE_POSITIVE`
+
+Status update request:
+
+```json
+{
+  "status": "FIXED"
+}
+```
+
+Finding responses include severity, category, OWASP mapping, file location, recommendation, status, and masked evidence. Full secrets must not be exposed in API responses, UI, logs, or reports.
+
 ### Dashboard API
 
 Dashboard APIs require a JWT bearer token and return metrics only for the logged-in user.
@@ -310,6 +344,7 @@ Current backend packages:
 - `common.enums`: scan, finding, severity, and risk enums
 - `common.util`: reusable utility helpers such as sensitive value masking
 - `dashboard`: user-scoped security summary, severity, OWASP, and score trend APIs
+- `finding`: owner-scoped finding listing, filtering, detail, and status update APIs
 - `health`: health check API
 - `persistence.entity`: JPA entities for users, projects, scans, and findings
 - `persistence.repository`: Spring Data JPA repositories for persistence access
@@ -376,6 +411,7 @@ Current routes:
 - `/projects/:projectId`
 - `/projects/:projectId/edit`
 - `/findings`
+- `/findings/:findingId`
 - `/reports`
 
 ### Frontend Authentication Flow
@@ -400,6 +436,7 @@ Protected frontend routes redirect unauthenticated users to `/login`:
 - `/projects/:projectId/edit`
 - `/quick-scan`
 - `/findings`
+- `/findings/:findingId`
 - `/reports`
 
 Logged-in users who open `/login` or `/register` are redirected to `/dashboard`. Header and sidebar logout actions clear the stored session.
@@ -416,6 +453,17 @@ The Angular `/dashboard` page calls the dashboard APIs and displays:
 - Severity breakdown chart
 - OWASP category breakdown chart
 - Recent scans table
+
+### Findings Management UI
+
+The Angular `/findings` page calls the findings APIs and includes:
+
+- Severity, category, OWASP category, and status filters
+- Severity chips
+- OWASP category display
+- Masked evidence preview
+- Status update actions
+- A `/findings/:findingId` detail page with location, masked evidence, and recommendation
 
 ## Planned Modules
 

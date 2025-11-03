@@ -1,0 +1,162 @@
+.loading-state {
+  display: grid;
+  justify-items: center;
+  padding: 48px 16px;
+}
+
+.page-heading {
+  margin-bottom: 22px;
+}
+
+.page-heading a {
+  margin-bottom: 12px;
+}
+
+.page-heading p {
+  margin: 0 0 8px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-heading h1 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.page-heading span {
+  display: block;
+  max-width: 840px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.summary-grid,
+.details-grid {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.details-grid {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
+.summary-card,
+.details-card,
+.recommendation-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.summary-card {
+  padding: 20px;
+}
+
+.summary-card span {
+  display: block;
+  margin-bottom: 12px;
+  color: #64748b;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.summary-card strong {
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.summary-card mat-form-field {
+  width: 100%;
+}
+
+.severity-chip {
+  min-width: 92px;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.severity-critical {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.severity-high {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.severity-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.severity-low {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.severity-info {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+dl {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+dt {
+  color: #64748b;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+dd {
+  margin: 4px 0 0;
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+pre {
+  min-height: 160px;
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Courier New', monospace;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.recommendation-card p {
+  color: #334155;
+  line-height: 1.7;
+}
+
+.recommendation-card small {
+  color: #64748b;
+}
+
+@media (max-width: 900px) {
+  .summary-grid,
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

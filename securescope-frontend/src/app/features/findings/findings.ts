@@ -1,18 +1,107 @@
-import { Component } from '@angular/core';
-import { PagePlaceholder } from '../../shared/components/page-placeholder';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { finalize } from 'rxjs';
+import {
+  Finding,
+  FindingCategory,
+  FindingSeverity,
+  FindingStatus
+} from '../../core/models/finding';
+import { FindingService } from '../../core/services/finding.service';
+import { MaterialModule } from '../../shared/material/material.module';
 
 @Component({
   selector: 'app-findings',
-  imports: [PagePlaceholder],
-  template: `
-    <app-page-placeholder
-      eyebrow="Findings"
-      title="Review security findings"
-      description="Findings will show severity, OWASP mapping, masked evidence, and developer-friendly remediation notes."
-      icon="bug_report"
-      cardTitle="Finding list"
-      cardText="Filtering, severity badges, and detail views will arrive with the scan result model."
-    />
-  `
+  imports: [ReactiveFormsModule, RouterLink, MaterialModule],
+  templateUrl: './findings.html',
+  styleUrl: './findings.scss'
 })
-export class Findings {}
+export class Findings implements OnInit {
+  private readonly findingService = inject(FindingService);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
+
+  protected readonly severities: FindingSeverity[] = ['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+  protected readonly statuses: FindingStatus[] = ['OPEN', 'FIXED', 'IGNORED', 'FALSE_POSITIVE'];
+  protected readonly categories: FindingCategory[] = [
+    'HARDCODED_SECRET',
+    'VULNERABLE_DEPENDENCY',
+    'RISKY_CODE_PATTERN',
+    'MISSING_SECURITY_BEST_PRACTICE',
+    'OWASP_TOP_TEN',
+    'CONFIGURATION_RISK'
+  ];
+  protected readonly displayedColumns = [
+    'severity',
+    'title',
+    'owaspCategory',
+    'status',
+    'evidence',
+    'actions'
+  ];
+
+  protected findings: Finding[] = [];
+  protected isLoading = false;
+
+  protected readonly filterForm = this.formBuilder.nonNullable.group({
+    severity: ['' as FindingSeverity | ''],
+    category: ['' as FindingCategory | ''],
+    owaspCategory: [''],
+    status: ['' as FindingStatus | '']
+  });
+
+  ngOnInit(): void {
+    this.loadFindings();
+  }
+
+  protected loadFindings(): void {
+    this.isLoading = true;
+
+    this.findingService
+      .getFindings(this.filterForm.getRawValue())
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (findings) => {
+          this.findings = findings;
+        },
+        error: () => {
+          this.snackBar.open('Unable to load findings.', 'Close', { duration: 4000 });
+        }
+      });
+  }
+
+  protected resetFilters(): void {
+    this.filterForm.reset({
+      severity: '',
+      category: '',
+      owaspCategory: '',
+      status: ''
+    });
+    this.loadFindings();
+  }
+
+  protected viewFinding(finding: Finding): void {
+    this.router.navigate(['/findings', finding.id]);
+  }
+
+  protected updateStatus(finding: Finding, status: FindingStatus): void {
+    this.findingService.updateStatus(finding.id, status).subscribe({
+      next: (updatedFinding) => {
+        this.findings = this.findings.map((item) =>
+          item.id === updatedFinding.id ? updatedFinding : item
+        );
+        this.snackBar.open('Finding status updated.', 'Close', { duration: 3000 });
+      },
+      error: () => {
+        this.snackBar.open('Unable to update finding status.', 'Close', { duration: 4000 });
+      }
+    });
+  }
+
+  protected severityClass(finding: Finding): string {
+    return `severity-chip severity-${finding.severity.toLowerCase()}`;
+  }
+}

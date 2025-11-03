@@ -1,0 +1,125 @@
+<section class="page-heading">
+  <p>Findings</p>
+  <h1>Review and triage security findings.</h1>
+  <span>Filter findings by severity, category, OWASP mapping, and workflow status. Evidence remains masked for safety.</span>
+</section>
+
+<mat-card class="filters-card">
+  <mat-card-content>
+    <form [formGroup]="filterForm" (ngSubmit)="loadFindings()" class="filters-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Severity</mat-label>
+        <mat-select formControlName="severity">
+          <mat-option value="">All severities</mat-option>
+          @for (severity of severities; track severity) {
+            <mat-option [value]="severity">{{ severity }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          <mat-option value="">All categories</mat-option>
+          @for (category of categories; track category) {
+            <mat-option [value]="category">{{ category }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>OWASP Category</mat-label>
+        <input matInput formControlName="owaspCategory" placeholder="A01, Injection, Secrets" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="">All statuses</mat-option>
+          @for (status of statuses; track status) {
+            <mat-option [value]="status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="filter-actions">
+        <button mat-stroked-button type="button" (click)="resetFilters()">Reset</button>
+        <button mat-flat-button color="primary" type="submit">
+          <mat-icon>filter_alt</mat-icon>
+          Apply
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="findings-card">
+  <mat-card-content>
+    @if (isLoading) {
+      <div class="loading-state">
+        <mat-spinner diameter="36" />
+      </div>
+    } @else if (findings.length > 0) {
+      <div class="table-wrap">
+        <table mat-table [dataSource]="findings">
+          <ng-container matColumnDef="severity">
+            <th mat-header-cell *matHeaderCellDef>Severity</th>
+            <td mat-cell *matCellDef="let finding">
+              <mat-chip [class]="severityClass(finding)">{{ finding.severity }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Finding</th>
+            <td mat-cell *matCellDef="let finding">
+              <button mat-button type="button" (click)="viewFinding(finding)">{{ finding.title }}</button>
+              <small>{{ finding.filePath || 'No file path' }}{{ finding.lineNumber ? ':' + finding.lineNumber : '' }}</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="owaspCategory">
+            <th mat-header-cell *matHeaderCellDef>OWASP Category</th>
+            <td mat-cell *matCellDef="let finding">{{ finding.owaspCategory || 'Unmapped' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let finding">
+              <mat-form-field appearance="outline" class="status-field">
+                <mat-select [value]="finding.status" (selectionChange)="updateStatus(finding, $event.value)">
+                  @for (status of statuses; track status) {
+                    <mat-option [value]="status">{{ status }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="evidence">
+            <th mat-header-cell *matHeaderCellDef>Masked Evidence</th>
+            <td mat-cell *matCellDef="let finding">
+              <code>{{ finding.evidence || 'No evidence captured' }}</code>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let finding">
+              <a mat-icon-button [routerLink]="['/findings', finding.id]" aria-label="View finding">
+                <mat-icon>visibility</mat-icon>
+              </a>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <mat-icon>verified_user</mat-icon>
+        <p>No findings match the current filters.</p>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

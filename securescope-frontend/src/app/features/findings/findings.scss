@@ -1,0 +1,160 @@
+.page-heading {
+  margin-bottom: 22px;
+}
+
+.page-heading p {
+  margin: 0 0 8px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-heading h1 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.page-heading span {
+  display: block;
+  max-width: 780px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.filters-card,
+.findings-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.filters-card {
+  margin-bottom: 20px;
+}
+
+.filters-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.filter-actions mat-icon {
+  margin-right: 8px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  color: #334155;
+  font-weight: 800;
+}
+
+td {
+  color: #475569;
+  vertical-align: middle;
+}
+
+td small {
+  display: block;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+code {
+  display: block;
+  max-width: 340px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #334155;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.status-field {
+  width: 170px;
+}
+
+.severity-chip {
+  min-width: 78px;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.severity-critical {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.severity-high {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.severity-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.severity-low {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.severity-info {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.loading-state,
+.empty-state {
+  display: grid;
+  justify-items: center;
+  padding: 42px 16px;
+  color: #475569;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  width: 46px;
+  height: 46px;
+  color: #0f766e;
+  font-size: 46px;
+}
+
+@media (max-width: 1180px) {
+  .filters-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .filters-form {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    display: grid;
+  }
+}

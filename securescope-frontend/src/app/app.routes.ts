@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Login } from './features/auth/login';
 import { Register } from './features/auth/register';
 import { Dashboard } from './features/dashboard/dashboard';
+import { FindingDetails } from './features/findings/finding-details';
 import { Findings } from './features/findings/findings';
 import { Home } from './features/home/home';
 import { ProjectDetails } from './features/projects/project-details';
@@ -26,6 +27,7 @@ export const routes: Routes = [
       { path: 'projects/:projectId/edit', component: ProjectForm, title: 'Edit Project | SecureScope', canActivate: [authGuard] },
       { path: 'projects/:projectId', component: ProjectDetails, title: 'Project Details | SecureScope', canActivate: [authGuard] },
       { path: 'findings', component: Findings, title: 'Findings | SecureScope', canActivate: [authGuard] },
+      { path: 'findings/:findingId', component: FindingDetails, title: 'Finding Details | SecureScope', canActivate: [authGuard] },
       { path: 'reports', component: Reports, title: 'Reports | SecureScope', canActivate: [authGuard] }
     ]
   },
