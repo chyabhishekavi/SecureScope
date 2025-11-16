@@ -257,6 +257,63 @@ Project request:
 
 Project responses include scan history for scans linked to the project. Quick Code Scan can link to a project by sending the optional `projectId` field in the scan request.
 
+### ZIP Upload Scan API
+
+ZIP upload scan APIs require a JWT bearer token and are scoped to the project owner.
+
+```http
+POST /api/projects/{projectId}/upload
+POST /api/projects/{projectId}/scans
+```
+
+Upload accepts a multipart form field named `file` and validates that the archive is a `.zip` file no larger than 10 MB. The backend extracts the ZIP into a temporary workspace, rejects unsafe paths to prevent Zip Slip, and only keeps supported source/config files.
+
+Ignored folders:
+
+- `node_modules`
+- `target`
+- `build`
+- `dist`
+- `.git`
+- `.idea`
+- `.vscode`
+
+Supported file types:
+
+- `.java`
+- `.ts`
+- `.js`
+- `.json`
+- `.yml`
+- `.yaml`
+- `.properties`
+- `.xml`
+- `.env`
+
+Upload response:
+
+```json
+{
+  "uploadId": "upload-id",
+  "projectId": "project-id",
+  "fileName": "project.zip",
+  "fileSizeBytes": 12345,
+  "extractedFileCount": 8,
+  "skippedEntryCount": 3,
+  "uploadedAt": "..."
+}
+```
+
+Start scan request:
+
+```json
+{
+  "uploadId": "upload-id"
+}
+```
+
+The scan reuses the existing secret and risky-pattern scanner engine, saves the scan and findings to PostgreSQL, links the scan to the project, and masks sensitive evidence.
+
 ### Findings API
 
 Finding APIs require a JWT bearer token and return data only for findings owned by the logged-in user through their scans.
@@ -464,6 +521,16 @@ The Angular `/findings` page calls the findings APIs and includes:
 - Masked evidence preview
 - Status update actions
 - A `/findings/:findingId` detail page with location, masked evidence, and recommendation
+
+### ZIP Upload Scan UI
+
+Project details pages include a ZIP upload scan workflow:
+
+- Choose a `.zip` project archive
+- Upload with simple progress feedback
+- Start a persisted ZIP scan
+- Review the completed security score, risk level, total findings, and saved scan ID
+- See the linked scan in the project scan history
 
 ## Planned Modules
 

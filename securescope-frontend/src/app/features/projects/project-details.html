@@ -56,6 +56,80 @@
 
   <mat-card class="details-card">
     <mat-card-header>
+      <mat-card-title>ZIP Upload Scan</mat-card-title>
+      <mat-card-subtitle>Upload a project archive, then start a persisted SecureScope scan</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="zip-upload-panel">
+        <label class="file-picker">
+          <input type="file" accept=".zip,application/zip" (change)="selectZipFile($event)" />
+          <mat-icon>upload_file</mat-icon>
+          <span>{{ selectedZipFile ? selectedZipFile.name : 'Choose ZIP file' }}</span>
+        </label>
+
+        <button mat-stroked-button type="button" (click)="uploadZip()" [disabled]="!selectedZipFile || isUploading">
+          @if (isUploading) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>cloud_upload</mat-icon>
+          }
+          Upload ZIP
+        </button>
+
+        <button mat-flat-button color="primary" type="button" (click)="startZipScan()" [disabled]="!uploadResponse || isScanning">
+          @if (isScanning) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>play_arrow</mat-icon>
+          }
+          Start Scan
+        </button>
+      </div>
+
+      @if (isUploading || uploadProgress > 0) {
+        <div class="upload-progress">
+          <div class="progress-track">
+            <span [style.width.%]="uploadProgress"></span>
+          </div>
+          <small>{{ uploadProgress }}% uploaded</small>
+        </div>
+      }
+
+      @if (uploadResponse) {
+        <div class="upload-summary">
+          <mat-icon>inventory_2</mat-icon>
+          <span>
+            {{ uploadResponse.extractedFileCount }} supported files ready,
+            {{ uploadResponse.skippedEntryCount }} ignored or unsupported entries skipped.
+          </span>
+        </div>
+      }
+
+      @if (scanResult) {
+        <section class="scan-result-grid">
+          <mat-card class="scan-result-card">
+            <span>Security Score</span>
+            <strong>{{ scanResult.securityScore }}</strong>
+          </mat-card>
+          <mat-card class="scan-result-card">
+            <span>Risk Level</span>
+            <strong><span [class]="scanRiskClass(scanResult)">{{ scanResult.riskLevel }}</span></strong>
+          </mat-card>
+          <mat-card class="scan-result-card">
+            <span>Total Findings</span>
+            <strong>{{ scanResult.totalFindings }}</strong>
+          </mat-card>
+          <mat-card class="scan-result-card">
+            <span>Saved Scan ID</span>
+            <strong class="scan-id">{{ scanResult.scanId }}</strong>
+          </mat-card>
+        </section>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="details-card">
+    <mat-card-header>
       <mat-card-title>Scan History</mat-card-title>
       <mat-card-subtitle>Scans linked to this project</mat-card-subtitle>
     </mat-card-header>
