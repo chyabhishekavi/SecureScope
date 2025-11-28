@@ -16,6 +16,7 @@ import com.securescope.scanner.dto.CodeLine;
 import com.securescope.scanner.dto.FindingResult;
 import com.securescope.scanner.dto.ScanResult;
 import com.securescope.scanner.dto.ScoreResult;
+import com.securescope.scanner.dependency.DependencyScannerService;
 import com.securescope.scanner.pattern.RiskyPatternScannerService;
 import com.securescope.scanner.scoring.SecurityScoringService;
 import com.securescope.scanner.secret.SecretScannerService;
@@ -46,6 +47,7 @@ public class ProjectZipScanService {
 	private final ZipUploadSessionStore zipUploadSessionStore;
 	private final SecretScannerService secretScannerService;
 	private final RiskyPatternScannerService riskyPatternScannerService;
+	private final DependencyScannerService dependencyScannerService;
 	private final SecurityScoringService securityScoringService;
 
 	public ProjectZipScanService(
@@ -56,6 +58,7 @@ public class ProjectZipScanService {
 		ZipUploadSessionStore zipUploadSessionStore,
 		SecretScannerService secretScannerService,
 		RiskyPatternScannerService riskyPatternScannerService,
+		DependencyScannerService dependencyScannerService,
 		SecurityScoringService securityScoringService
 	) {
 		this.projectRepository = projectRepository;
@@ -65,6 +68,7 @@ public class ProjectZipScanService {
 		this.zipUploadSessionStore = zipUploadSessionStore;
 		this.secretScannerService = secretScannerService;
 		this.riskyPatternScannerService = riskyPatternScannerService;
+		this.dependencyScannerService = dependencyScannerService;
 		this.securityScoringService = securityScoringService;
 	}
 
@@ -143,6 +147,7 @@ public class ProjectZipScanService {
 			List<CodeLine> lines = toCodeLines(content);
 			findings.addAll(secretScannerService.scan(lines, file.relativePath()));
 			findings.addAll(riskyPatternScannerService.scan(lines, file.relativePath()));
+			findings.addAll(dependencyScannerService.scan(file.relativePath(), content));
 		}
 
 		return findings;

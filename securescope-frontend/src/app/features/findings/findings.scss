@@ -127,6 +127,23 @@ code {
   color: #334155;
 }
 
+.category-chip {
+  display: inline-block;
+  min-width: 120px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.dependency-chip {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
 .loading-state,
 .empty-state {
   display: grid;

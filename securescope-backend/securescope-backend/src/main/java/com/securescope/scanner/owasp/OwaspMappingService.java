@@ -20,4 +20,8 @@ public class OwaspMappingService {
 	public String securityMisconfiguration() {
 		return "A05:2021 - Security Misconfiguration";
 	}
+
+	public String softwareSupplyChainFailures() {
+		return "A06:2021 - Vulnerable and Outdated Components";
+	}
 }

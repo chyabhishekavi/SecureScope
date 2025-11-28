@@ -314,6 +314,25 @@ Start scan request:
 
 The scan reuses the existing secret and risky-pattern scanner engine, saves the scan and findings to PostgreSQL, links the scan to the project, and masks sensitive evidence.
 
+### Dependency Vulnerability Scanner
+
+ZIP scans also parse dependency manifests and compare dependencies against the first mock vulnerability database.
+
+Supported manifests:
+
+- Maven `pom.xml`
+- npm `package.json`
+
+The scanner extracts dependency names and versions, then detects example vulnerable packages:
+
+- old `log4j-core` versions
+- old `spring-core` versions
+- old `jackson-databind` versions
+- old `lodash` versions
+- old `axios` versions
+
+Dependency findings use the `VULNERABLE_DEPENDENCY` category and include package name, current version, vulnerability ID, severity, recommendation, and fixed version where available. These findings map to OWASP `A06:2021 - Vulnerable and Outdated Components`, representing software supply chain risk in this first implementation.
+
 ### Findings API
 
 Finding APIs require a JWT bearer token and return data only for findings owned by the logged-in user through their scans.
@@ -516,7 +535,9 @@ The Angular `/dashboard` page calls the dashboard APIs and displays:
 The Angular `/findings` page calls the findings APIs and includes:
 
 - Severity, category, OWASP category, and status filters
+- Dependency category quick filter
 - Severity chips
+- Dependency category chips
 - OWASP category display
 - Masked evidence preview
 - Status update actions

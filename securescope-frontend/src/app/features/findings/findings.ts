@@ -37,6 +37,7 @@ export class Findings implements OnInit {
   protected readonly displayedColumns = [
     'severity',
     'title',
+    'category',
     'owaspCategory',
     'status',
     'evidence',
@@ -83,6 +84,13 @@ export class Findings implements OnInit {
     this.loadFindings();
   }
 
+  protected showDependencyFindings(): void {
+    this.filterForm.patchValue({
+      category: 'VULNERABLE_DEPENDENCY'
+    });
+    this.loadFindings();
+  }
+
   protected viewFinding(finding: Finding): void {
     this.router.navigate(['/findings', finding.id]);
   }
@@ -103,5 +111,9 @@ export class Findings implements OnInit {
 
   protected severityClass(finding: Finding): string {
     return `severity-chip severity-${finding.severity.toLowerCase()}`;
+  }
+
+  protected categoryClass(finding: Finding): string {
+    return finding.category === 'VULNERABLE_DEPENDENCY' ? 'category-chip dependency-chip' : 'category-chip';
   }
 }
