@@ -1,0 +1,92 @@
+.page-heading {
+  margin-bottom: 22px;
+}
+
+.page-heading p {
+  margin: 0 0 8px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-heading h1 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.page-heading span {
+  display: block;
+  max-width: 780px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.report-generator,
+.reports-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.report-generator {
+  margin-bottom: 20px;
+}
+
+.report-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.report-form mat-icon,
+.report-form mat-spinner {
+  margin-right: 8px;
+}
+
+.loading-state,
+.empty-state {
+  display: grid;
+  justify-items: center;
+  padding: 36px 16px;
+  color: #475569;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  width: 44px;
+  height: 44px;
+  color: #0f766e;
+  font-size: 44px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  color: #334155;
+  font-weight: 800;
+}
+
+td {
+  color: #475569;
+}
+
+@media (max-width: 760px) {
+  .report-form {
+    grid-template-columns: 1fr;
+  }
+}

@@ -10,6 +10,7 @@ import { ProjectForm } from './features/projects/project-form';
 import { Projects } from './features/projects/projects';
 import { QuickScan } from './features/quick-scan/quick-scan';
 import { Reports } from './features/reports/reports';
+import { ReportPreview } from './features/reports/report-preview';
 import { MainLayout } from './layout/main-layout/main-layout';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
@@ -28,7 +29,8 @@ export const routes: Routes = [
       { path: 'projects/:projectId', component: ProjectDetails, title: 'Project Details | SecureScope', canActivate: [authGuard] },
       { path: 'findings', component: Findings, title: 'Findings | SecureScope', canActivate: [authGuard] },
       { path: 'findings/:findingId', component: FindingDetails, title: 'Finding Details | SecureScope', canActivate: [authGuard] },
-      { path: 'reports', component: Reports, title: 'Reports | SecureScope', canActivate: [authGuard] }
+      { path: 'reports', component: Reports, title: 'Reports | SecureScope', canActivate: [authGuard] },
+      { path: 'reports/:reportId', component: ReportPreview, title: 'Report Preview | SecureScope', canActivate: [authGuard] }
     ]
   },
   { path: 'login', component: Login, title: 'Login | SecureScope', canActivate: [guestGuard] },

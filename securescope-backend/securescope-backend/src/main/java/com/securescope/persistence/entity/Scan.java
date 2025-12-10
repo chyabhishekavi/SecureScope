@@ -54,6 +54,9 @@ public class Scan extends AuditableEntity {
 	@OneToMany(mappedBy = "scan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Finding> findings = new ArrayList<>();
 
+	@OneToMany(mappedBy = "scan", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Report> reports = new ArrayList<>();
+
 	public String getScanName() {
 		return scanName;
 	}
@@ -128,5 +131,9 @@ public class Scan extends AuditableEntity {
 
 	public List<Finding> getFindings() {
 		return findings;
+	}
+
+	public List<Report> getReports() {
+		return reports;
 	}
 }

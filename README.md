@@ -380,6 +380,34 @@ GET /api/dashboard/score-trend
 
 The summary endpoint returns total projects, total scans, average security score, critical findings, high findings, and recent scans. The summary endpoints power the Angular security dashboard cards, severity chart, OWASP category chart, and recent scans table.
 
+### Security Reports API
+
+Report APIs require a JWT bearer token and are scoped to the scan owner.
+
+```http
+POST /api/scans/{scanId}/reports
+GET /api/scans/{scanId}/reports
+GET /api/reports/{reportId}
+GET /api/reports/{reportId}/download
+```
+
+The first report implementation generates HTML reports and stores report metadata plus HTML content in PostgreSQL. PDF generation is intentionally deferred until an HTML-to-PDF library is selected and configured.
+
+Reports include:
+
+- project name
+- scan date
+- scan source
+- security score
+- risk level
+- severity summary
+- OWASP summary
+- findings table
+- dependency findings
+- secret findings
+- recommendations
+- security disclaimer
+
 ### Quick Code Scan UI
 
 The Angular frontend includes a `/quick-scan` page that connects to:
@@ -425,6 +453,7 @@ Current backend packages:
 - `persistence.entity`: JPA entities for users, projects, scans, and findings
 - `persistence.repository`: Spring Data JPA repositories for persistence access
 - `project`: owner-scoped project CRUD APIs, DTOs, and project scan history responses
+- `report`: owner-scoped HTML security report generation, metadata, preview, and download APIs
 - `scanner`: quick code scanner orchestration, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
 
 ## Frontend Setup
@@ -489,6 +518,7 @@ Current routes:
 - `/findings`
 - `/findings/:findingId`
 - `/reports`
+- `/reports/:reportId`
 
 ### Frontend Authentication Flow
 
@@ -514,6 +544,7 @@ Protected frontend routes redirect unauthenticated users to `/login`:
 - `/findings`
 - `/findings/:findingId`
 - `/reports`
+- `/reports/:reportId`
 
 Logged-in users who open `/login` or `/register` are redirected to `/dashboard`. Header and sidebar logout actions clear the stored session.
 
@@ -552,6 +583,16 @@ Project details pages include a ZIP upload scan workflow:
 - Start a persisted ZIP scan
 - Review the completed security score, risk level, total findings, and saved scan ID
 - See the linked scan in the project scan history
+
+### Security Reports UI
+
+The Angular `/reports` page includes:
+
+- scan selection
+- Generate Report button
+- generated report list
+- Report Preview page at `/reports/:reportId`
+- Download Report button for saved HTML reports
 
 ## Planned Modules
 

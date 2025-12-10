@@ -1,0 +1,28 @@
+@if (isLoading) {
+  <div class="loading-state">
+    <mat-spinner diameter="38" />
+  </div>
+} @else if (preview) {
+  <section class="page-heading">
+    <a mat-button routerLink="/reports">
+      <mat-icon>arrow_back</mat-icon>
+      Reports
+    </a>
+    <p>Report Preview</p>
+    <h1>{{ preview.report.title }}</h1>
+    <button mat-flat-button color="primary" type="button" (click)="downloadReport()" [disabled]="isDownloading">
+      @if (isDownloading) {
+        <mat-spinner diameter="20" />
+      } @else {
+        <mat-icon>download</mat-icon>
+      }
+      Download Report
+    </button>
+  </section>
+
+  <mat-card class="preview-card">
+    <mat-card-content>
+      <iframe title="SecureScope report preview" [srcdoc]="preview.htmlContent"></iframe>
+    </mat-card-content>
+  </mat-card>
+}
