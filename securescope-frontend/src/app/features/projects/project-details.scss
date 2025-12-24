@@ -94,8 +94,21 @@
   align-items: center;
 }
 
+.github-scan-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.github-url-field {
+  flex: 1 1 360px;
+}
+
 .zip-upload-panel mat-icon,
-.zip-upload-panel mat-spinner {
+.zip-upload-panel mat-spinner,
+.github-scan-panel mat-icon,
+.github-scan-panel mat-spinner {
   margin-right: 8px;
 }
 
@@ -151,6 +164,14 @@
   padding: 12px 14px;
   border-radius: 8px;
   background: #f0fdfa;
+}
+
+.scan-loading {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+  color: #475569;
 }
 
 .scan-result-grid {

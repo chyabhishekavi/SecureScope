@@ -1,35 +1,21 @@
 package com.securescope.scanner.zip;
 
-import com.securescope.common.enums.FindingStatus;
 import com.securescope.common.enums.ScanSourceType;
-import com.securescope.common.enums.ScanStatus;
 import com.securescope.common.exception.BadRequestException;
 import com.securescope.common.exception.ResourceNotFoundException;
-import com.securescope.persistence.entity.Finding;
 import com.securescope.persistence.entity.Project;
-import com.securescope.persistence.entity.Scan;
 import com.securescope.persistence.entity.User;
 import com.securescope.persistence.repository.ProjectRepository;
-import com.securescope.persistence.repository.ScanRepository;
 import com.securescope.persistence.repository.UserRepository;
-import com.securescope.scanner.dto.CodeLine;
-import com.securescope.scanner.dto.FindingResult;
 import com.securescope.scanner.dto.ScanResult;
-import com.securescope.scanner.dto.ScoreResult;
-import com.securescope.scanner.dependency.DependencyScannerService;
-import com.securescope.scanner.pattern.RiskyPatternScannerService;
-import com.securescope.scanner.scoring.SecurityScoringService;
-import com.securescope.scanner.secret.SecretScannerService;
+import com.securescope.scanner.archive.ProjectArchiveScanService;
 import com.securescope.scanner.zip.dto.ZipScanRequest;
 import com.securescope.scanner.zip.dto.ZipUploadResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,34 +28,22 @@ public class ProjectZipScanService {
 
 	private final ProjectRepository projectRepository;
 	private final UserRepository userRepository;
-	private final ScanRepository scanRepository;
 	private final SafeZipExtractorService safeZipExtractorService;
 	private final ZipUploadSessionStore zipUploadSessionStore;
-	private final SecretScannerService secretScannerService;
-	private final RiskyPatternScannerService riskyPatternScannerService;
-	private final DependencyScannerService dependencyScannerService;
-	private final SecurityScoringService securityScoringService;
+	private final ProjectArchiveScanService projectArchiveScanService;
 
 	public ProjectZipScanService(
 		ProjectRepository projectRepository,
 		UserRepository userRepository,
-		ScanRepository scanRepository,
 		SafeZipExtractorService safeZipExtractorService,
 		ZipUploadSessionStore zipUploadSessionStore,
-		SecretScannerService secretScannerService,
-		RiskyPatternScannerService riskyPatternScannerService,
-		DependencyScannerService dependencyScannerService,
-		SecurityScoringService securityScoringService
+		ProjectArchiveScanService projectArchiveScanService
 	) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository;
-		this.scanRepository = scanRepository;
 		this.safeZipExtractorService = safeZipExtractorService;
 		this.zipUploadSessionStore = zipUploadSessionStore;
-		this.secretScannerService = secretScannerService;
-		this.riskyPatternScannerService = riskyPatternScannerService;
-		this.dependencyScannerService = dependencyScannerService;
-		this.securityScoringService = securityScoringService;
+		this.projectArchiveScanService = projectArchiveScanService;
 	}
 
 	public ZipUploadResponse uploadZip(UUID projectId, MultipartFile file, String userEmail) {
@@ -122,77 +96,18 @@ public class ProjectZipScanService {
 			.filter(upload -> upload.userEmail().equals(userEmail))
 			.orElseThrow(() -> new ResourceNotFoundException("Uploaded ZIP not found"));
 
-		List<FindingResult> findingResults = scanFiles(session.files());
-		ScoreResult scoreResult = securityScoringService.calculateScore(findingResults);
-		Scan scan = saveScan(project, user, session.fileName(), scoreResult, findingResults);
+		ScanResult scanResult = projectArchiveScanService.scanAndSave(
+			project,
+			user,
+			"ZIP scan: " + session.fileName(),
+			ScanSourceType.ZIP_UPLOAD,
+			session.files()
+		);
 
 		zipUploadSessionStore.remove(session.uploadId());
 		deleteQuietly(session.extractionDirectory());
 
-		return new ScanResult(
-			scan.getId().toString(),
-			scan.getStatus(),
-			scan.getSecurityScore(),
-			scan.getRiskLevel(),
-			findingResults.size(),
-			findingResults
-		);
-	}
-
-	private List<FindingResult> scanFiles(List<ExtractedZipFile> files) {
-		List<FindingResult> findings = new ArrayList<>();
-
-		for (ExtractedZipFile file : files) {
-			String content = readTextFile(file.absolutePath());
-			List<CodeLine> lines = toCodeLines(content);
-			findings.addAll(secretScannerService.scan(lines, file.relativePath()));
-			findings.addAll(riskyPatternScannerService.scan(lines, file.relativePath()));
-			findings.addAll(dependencyScannerService.scan(file.relativePath(), content));
-		}
-
-		return findings;
-	}
-
-	private Scan saveScan(
-		Project project,
-		User user,
-		String fileName,
-		ScoreResult scoreResult,
-		List<FindingResult> findingResults
-	) {
-		Instant now = Instant.now();
-		Scan scan = new Scan();
-		scan.setScanName("ZIP scan: " + fileName);
-		scan.setSourceType(ScanSourceType.ZIP_UPLOAD);
-		scan.setStatus(ScanStatus.COMPLETED);
-		scan.setSecurityScore(scoreResult.securityScore());
-		scan.setRiskLevel(scoreResult.riskLevel());
-		scan.setStartedAt(now);
-		scan.setCompletedAt(now);
-		scan.setRequestedBy(user);
-		scan.setProject(project);
-
-		for (FindingResult findingResult : findingResults) {
-			scan.getFindings().add(toFindingEntity(findingResult, scan));
-		}
-
-		return scanRepository.save(scan);
-	}
-
-	private Finding toFindingEntity(FindingResult findingResult, Scan scan) {
-		Finding finding = new Finding();
-		finding.setTitle(findingResult.title());
-		finding.setDescription(findingResult.description());
-		finding.setSeverity(findingResult.severity());
-		finding.setCategory(findingResult.category());
-		finding.setStatus(FindingStatus.OPEN);
-		finding.setOwaspCategory(findingResult.owaspCategory());
-		finding.setFilePath(findingResult.filePath());
-		finding.setLineNumber(findingResult.lineNumber());
-		finding.setEvidence(findingResult.evidence());
-		finding.setRecommendation(findingResult.recommendation());
-		finding.setScan(scan);
-		return finding;
+		return scanResult;
 	}
 
 	private Project getOwnedProject(UUID projectId, String userEmail) {
@@ -219,25 +134,6 @@ public class ProjectZipScanService {
 		} catch (IOException exception) {
 			throw new BadRequestException("Unable to prepare ZIP upload workspace");
 		}
-	}
-
-	private String readTextFile(Path path) {
-		try {
-			return Files.readString(path, StandardCharsets.UTF_8);
-		} catch (IOException exception) {
-			return "";
-		}
-	}
-
-	private List<CodeLine> toCodeLines(String codeContent) {
-		String[] rawLines = codeContent.split("\\R", -1);
-		List<CodeLine> lines = new ArrayList<>();
-
-		for (int index = 0; index < rawLines.length; index++) {
-			lines.add(new CodeLine(index + 1, rawLines[index]));
-		}
-
-		return lines;
 	}
 
 	private void deleteQuietly(Path directory) {

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { filter, map, Observable } from 'rxjs';
 import { Project } from '../models/project';
 import { ProjectRequest } from '../models/project-request';
+import { GitHubRepositoryResponse } from '../models/github-repository-response';
 import { ScanResult } from '../models/scan-result';
 import { ZipUploadResponse } from '../models/zip-upload-response';
 
@@ -73,6 +74,18 @@ export class ProjectService {
   startZipScan(projectId: string, uploadId: string): Observable<ScanResult> {
     return this.httpClient
       .post<ApiResponse<ScanResult>>(`${this.projectsUrl}/${projectId}/scans`, { uploadId })
+      .pipe(map((response) => response.data));
+  }
+
+  connectGitHubRepository(projectId: string, repositoryUrl: string): Observable<GitHubRepositoryResponse> {
+    return this.httpClient
+      .post<ApiResponse<GitHubRepositoryResponse>>(`${this.projectsUrl}/${projectId}/github/connect`, { repositoryUrl })
+      .pipe(map((response) => response.data));
+  }
+
+  scanGitHubRepository(projectId: string, repositoryUrl?: string): Observable<ScanResult> {
+    return this.httpClient
+      .post<ApiResponse<ScanResult>>(`${this.projectsUrl}/${projectId}/github/scan`, { repositoryUrl })
       .pipe(map((response) => response.data));
   }
 

@@ -314,6 +314,37 @@ Start scan request:
 
 The scan reuses the existing secret and risky-pattern scanner engine, saves the scan and findings to PostgreSQL, links the scan to the project, and masks sensitive evidence.
 
+### GitHub Repository Scan API
+
+GitHub scan APIs require a JWT bearer token and are scoped to the project owner.
+
+```http
+POST /api/projects/{projectId}/github/connect
+POST /api/projects/{projectId}/github/scan
+```
+
+Connect request:
+
+```json
+{
+  "repositoryUrl": "https://github.com/example/securescope"
+}
+```
+
+SecureScope validates that the repository URL uses HTTPS and points to `github.com/{owner}/{repository}`. The backend normalizes `.git` suffixes, stores the connected URL on the project, and returns a repository summary.
+
+Scan request:
+
+```json
+{
+  "repositoryUrl": "https://github.com/example/securescope"
+}
+```
+
+If `repositoryUrl` is omitted, SecureScope scans the GitHub URL already connected to the project. The backend downloads the public repository ZIP using GitHub's zipball API, extracts it with the same Zip Slip protection used by ZIP uploads, ignores build/dependency folders, scans supported source/config files, saves the scan and findings, and links the scan to the project.
+
+Invalid, non-GitHub, non-HTTPS, missing, private, or unreachable repositories return a clear bad request error.
+
 ### Dependency Vulnerability Scanner
 
 ZIP scans also parse dependency manifests and compare dependencies against the first mock vulnerability database.
@@ -442,6 +473,7 @@ Current backend packages:
 
 - `auth`: registration, login, current-user API, JWT service, and authentication filter
 - `config`: application and web configuration
+- `scanner.archive`: shared archive scanning and scan persistence for ZIP and GitHub scans
 - `common.response`: shared API response models
 - `common.dto`: shared DTOs used across backend layers
 - `common.exception`: custom exceptions and global exception handling
@@ -454,7 +486,7 @@ Current backend packages:
 - `persistence.repository`: Spring Data JPA repositories for persistence access
 - `project`: owner-scoped project CRUD APIs, DTOs, and project scan history responses
 - `report`: owner-scoped HTML security report generation, metadata, preview, and download APIs
-- `scanner`: quick code scanner orchestration, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
+- `scanner`: quick code scanner orchestration, GitHub repository scanning, ZIP archive scanning, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
 
 ## Frontend Setup
 
@@ -581,6 +613,17 @@ Project details pages include a ZIP upload scan workflow:
 - Choose a `.zip` project archive
 - Upload with simple progress feedback
 - Start a persisted ZIP scan
+- Review the completed security score, risk level, total findings, and saved scan ID
+- See the linked scan in the project scan history
+
+### GitHub Repository Scan UI
+
+Project details pages include a GitHub repository scan workflow:
+
+- Enter a public GitHub repository URL
+- Connect the repository to the project
+- Start a persisted GitHub repository scan
+- Review loading state while the repository is downloaded and scanned
 - Review the completed security score, risk level, total findings, and saved scan ID
 - See the linked scan in the project scan history
 

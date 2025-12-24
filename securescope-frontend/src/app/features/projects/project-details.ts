@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs';
@@ -12,7 +13,7 @@ import { MaterialModule } from '../../shared/material/material.module';
 
 @Component({
   selector: 'app-project-details',
-  imports: [DatePipe, RouterLink, MaterialModule],
+  imports: [DatePipe, FormsModule, RouterLink, MaterialModule],
   templateUrl: './project-details.html',
   styleUrl: './project-details.scss'
 })
@@ -29,8 +30,12 @@ export class ProjectDetails implements OnInit {
   protected uploadProgress = 0;
   protected isUploading = false;
   protected isScanning = false;
+  protected isConnectingGitHub = false;
+  protected isScanningGitHub = false;
+  protected githubRepositoryUrl = '';
   protected uploadResponse: ZipUploadResponse | null = null;
   protected scanResult: ScanResult | null = null;
+  protected githubScanResult: ScanResult | null = null;
 
   ngOnInit(): void {
     const projectId = this.route.snapshot.paramMap.get('projectId');
@@ -138,6 +143,61 @@ export class ProjectDetails implements OnInit {
       });
   }
 
+  protected connectGitHubRepository(): void {
+    if (!this.project || !this.githubRepositoryUrl.trim()) {
+      this.snackBar.open('Enter a GitHub repository URL first.', 'Close', { duration: 3000 });
+      return;
+    }
+
+    this.isConnectingGitHub = true;
+    this.githubScanResult = null;
+
+    this.projectService
+      .connectGitHubRepository(this.project.id, this.githubRepositoryUrl.trim())
+      .pipe(finalize(() => (this.isConnectingGitHub = false)))
+      .subscribe({
+        next: (repository) => {
+          this.githubRepositoryUrl = repository.repositoryUrl;
+          this.snackBar.open(`Connected ${repository.repositoryName}.`, 'Close', { duration: 3000 });
+          this.loadProject(this.project!.id);
+        },
+        error: () => {
+          this.snackBar.open('Enter a valid public GitHub repository URL.', 'Close', { duration: 5000 });
+        }
+      });
+  }
+
+  protected startGitHubScan(): void {
+    if (!this.project) {
+      return;
+    }
+
+    const repositoryUrl = this.githubRepositoryUrl.trim() || this.project.githubUrl;
+    if (!repositoryUrl) {
+      this.snackBar.open('Connect or enter a GitHub repository URL first.', 'Close', { duration: 3000 });
+      return;
+    }
+
+    this.isScanningGitHub = true;
+    this.githubScanResult = null;
+
+    this.projectService
+      .scanGitHubRepository(this.project.id, repositoryUrl)
+      .pipe(finalize(() => (this.isScanningGitHub = false)))
+      .subscribe({
+        next: (scanResult) => {
+          this.githubScanResult = scanResult;
+          this.snackBar.open('GitHub repository scan completed.', 'Close', { duration: 3000 });
+          this.loadProject(this.project!.id);
+        },
+        error: () => {
+          this.snackBar.open('Unable to scan repository. Confirm the URL is public and valid.', 'Close', {
+            duration: 5000
+          });
+        }
+      });
+  }
+
   private loadProject(projectId: string): void {
     this.isLoading = true;
 
@@ -147,6 +207,7 @@ export class ProjectDetails implements OnInit {
       .subscribe({
         next: (project) => {
           this.project = project;
+          this.githubRepositoryUrl = project.githubUrl ?? this.githubRepositoryUrl;
         },
         error: () => {
           this.snackBar.open('Unable to load project.', 'Close', { duration: 4000 });

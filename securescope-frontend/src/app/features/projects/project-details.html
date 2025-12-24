@@ -56,6 +56,83 @@
 
   <mat-card class="details-card">
     <mat-card-header>
+      <mat-card-title>GitHub Repository Scan</mat-card-title>
+      <mat-card-subtitle>Connect a public GitHub repository and scan its source archive</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="github-scan-panel">
+        <mat-form-field appearance="outline" class="github-url-field">
+          <mat-label>GitHub Repository URL</mat-label>
+          <input
+            matInput
+            type="url"
+            placeholder="https://github.com/owner/repository"
+            [(ngModel)]="githubRepositoryUrl"
+          />
+        </mat-form-field>
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="connectGitHubRepository()"
+          [disabled]="!githubRepositoryUrl.trim() || isConnectingGitHub"
+        >
+          @if (isConnectingGitHub) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>link</mat-icon>
+          }
+          Connect
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="startGitHubScan()"
+          [disabled]="(!githubRepositoryUrl.trim() && !project.githubUrl) || isScanningGitHub"
+        >
+          @if (isScanningGitHub) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>travel_explore</mat-icon>
+          }
+          Scan Repository
+        </button>
+      </div>
+
+      @if (isScanningGitHub) {
+        <div class="scan-loading">
+          <mat-spinner diameter="24" />
+          <span>Downloading and scanning repository...</span>
+        </div>
+      }
+
+      @if (githubScanResult) {
+        <section class="scan-result-grid">
+          <mat-card class="scan-result-card">
+            <span>Security Score</span>
+            <strong>{{ githubScanResult.securityScore }}</strong>
+          </mat-card>
+          <mat-card class="scan-result-card">
+            <span>Risk Level</span>
+            <strong><span [class]="scanRiskClass(githubScanResult)">{{ githubScanResult.riskLevel }}</span></strong>
+          </mat-card>
+          <mat-card class="scan-result-card">
+            <span>Total Findings</span>
+            <strong>{{ githubScanResult.totalFindings }}</strong>
+          </mat-card>
+          <mat-card class="scan-result-card">
+            <span>Saved Scan ID</span>
+            <strong class="scan-id">{{ githubScanResult.scanId }}</strong>
+          </mat-card>
+        </section>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="details-card">
+    <mat-card-header>
       <mat-card-title>ZIP Upload Scan</mat-card-title>
       <mat-card-subtitle>Upload a project archive, then start a persisted SecureScope scan</mat-card-subtitle>
     </mat-card-header>
