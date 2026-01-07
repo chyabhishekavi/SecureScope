@@ -203,6 +203,11 @@
   font-size: 1.4rem;
 }
 
+.scan-result-card app-security-score-badge {
+  display: inline-block;
+  margin-top: 2px;
+}
+
 .scan-result-card .scan-id {
   overflow-wrap: anywhere;
   font-family: 'Courier New', monospace;

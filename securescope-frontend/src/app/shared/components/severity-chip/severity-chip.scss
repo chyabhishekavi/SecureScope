@@ -1,0 +1,37 @@
+.severity-chip {
+  display: inline-grid;
+  min-width: 78px;
+  min-height: 28px;
+  place-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
+.severity-critical {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.severity-high {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.severity-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.severity-low {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.severity-info {
+  background: #e2e8f0;
+  color: #334155;
+}

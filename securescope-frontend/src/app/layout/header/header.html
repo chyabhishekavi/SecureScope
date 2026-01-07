@@ -7,8 +7,18 @@
   <span class="spacer"></span>
 
   @if (authService.currentUser(); as user) {
+    <nav class="mobile-nav" aria-label="Primary navigation">
+      @for (item of navigationItems; track item.path) {
+        <a mat-icon-button [routerLink]="item.path" [attr.aria-label]="item.label">
+          <mat-icon>{{ item.icon }}</mat-icon>
+        </a>
+      }
+    </nav>
     <span class="user-chip">{{ user.name }}</span>
-    <button mat-button type="button" (click)="logout()">Logout</button>
+    <button mat-button type="button" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      Logout
+    </button>
   } @else {
     <a mat-button routerLink="/login">Login</a>
     <a mat-flat-button color="primary" routerLink="/register">Register</a>

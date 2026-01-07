@@ -112,7 +112,7 @@
         <section class="scan-result-grid">
           <mat-card class="scan-result-card">
             <span>Security Score</span>
-            <strong>{{ githubScanResult.securityScore }}</strong>
+            <strong><app-security-score-badge [score]="githubScanResult.securityScore" /></strong>
           </mat-card>
           <mat-card class="scan-result-card">
             <span>Risk Level</span>
@@ -186,7 +186,7 @@
         <section class="scan-result-grid">
           <mat-card class="scan-result-card">
             <span>Security Score</span>
-            <strong>{{ scanResult.securityScore }}</strong>
+            <strong><app-security-score-badge [score]="scanResult.securityScore" /></strong>
           </mat-card>
           <mat-card class="scan-result-card">
             <span>Risk Level</span>

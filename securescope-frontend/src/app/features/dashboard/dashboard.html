@@ -1,32 +1,52 @@
 <section class="page-heading">
-  <p>Dashboard</p>
-  <h1>Security overview</h1>
-  <span>Track project coverage, scan volume, score quality, and finding distribution across your SecureScope workspace.</span>
+  <div>
+    <p>Dashboard</p>
+    <h1>Security overview</h1>
+    <span>Track project coverage, scan volume, score quality, and finding distribution across your SecureScope workspace.</span>
+  </div>
+  <button mat-stroked-button type="button" (click)="reloadDashboard()" [disabled]="isLoading">
+    <mat-icon>refresh</mat-icon>
+    Refresh
+  </button>
 </section>
 
 @if (isLoading) {
   <div class="loading-state">
     <mat-spinner diameter="40" />
+    <span>Loading workspace metrics...</span>
   </div>
+} @else if (errorMessage) {
+  <mat-card class="state-card">
+    <app-empty-state icon="error_outline" title="Dashboard unavailable" [message]="errorMessage" />
+    <button mat-flat-button color="primary" type="button" (click)="reloadDashboard()">
+      <mat-icon>refresh</mat-icon>
+      Try Again
+    </button>
+  </mat-card>
 } @else if (summary) {
   <section class="metric-grid">
     <mat-card class="metric-card">
+      <mat-icon>folder_open</mat-icon>
       <span>Total Projects</span>
       <strong>{{ summary.totalProjects }}</strong>
     </mat-card>
     <mat-card class="metric-card">
+      <mat-icon>radar</mat-icon>
       <span>Total Scans</span>
       <strong>{{ summary.totalScans }}</strong>
     </mat-card>
-    <mat-card class="metric-card">
+    <mat-card class="metric-card score-metric">
+      <mat-icon>shield</mat-icon>
       <span>Average Security Score</span>
-      <strong>{{ summary.averageSecurityScore }}</strong>
+      <strong><app-security-score-badge [score]="summary.averageSecurityScore" /></strong>
     </mat-card>
     <mat-card class="metric-card critical-card">
+      <mat-icon>priority_high</mat-icon>
       <span>Critical Findings</span>
       <strong>{{ summary.criticalFindings }}</strong>
     </mat-card>
     <mat-card class="metric-card high-card">
+      <mat-icon>warning</mat-icon>
       <span>High Findings</span>
       <strong>{{ summary.highFindings }}</strong>
     </mat-card>
@@ -104,10 +124,11 @@
           </table>
         </div>
       } @else {
-        <div class="empty-state">
-          <mat-icon>monitoring</mat-icon>
-          <p>No scans yet. Run a Quick Code Scan to populate dashboard metrics.</p>
-        </div>
+        <app-empty-state
+          icon="monitoring"
+          title="No scans yet"
+          message="Run a Quick Code Scan or project scan to populate dashboard metrics."
+        />
       }
     </mat-card-content>
   </mat-card>

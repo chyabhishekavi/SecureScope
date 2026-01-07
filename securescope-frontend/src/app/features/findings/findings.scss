@@ -96,37 +96,6 @@ code {
   width: 170px;
 }
 
-.severity-chip {
-  min-width: 78px;
-  justify-content: center;
-  font-weight: 800;
-}
-
-.severity-critical {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.severity-high {
-  background: #ffedd5;
-  color: #9a3412;
-}
-
-.severity-medium {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.severity-low {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.severity-info {
-  background: #e2e8f0;
-  color: #334155;
-}
-
 .category-chip {
   display: inline-block;
   min-width: 120px;
@@ -144,20 +113,12 @@ code {
   color: #5b21b6;
 }
 
-.loading-state,
-.empty-state {
+.loading-state {
   display: grid;
   justify-items: center;
   padding: 42px 16px;
   color: #475569;
   text-align: center;
-}
-
-.empty-state mat-icon {
-  width: 46px;
-  height: 46px;
-  color: #0f766e;
-  font-size: 46px;
 }
 
 @media (max-width: 1180px) {

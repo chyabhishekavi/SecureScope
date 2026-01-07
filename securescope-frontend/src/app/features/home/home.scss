@@ -1,11 +1,13 @@
 .hero {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 28px;
   align-items: end;
-  min-height: 280px;
-  padding: 40px;
+  min-height: 420px;
+  padding: 42px;
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(15, 118, 110, 0.94), rgba(15, 23, 42, 0.92)),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 118, 110, 0.76)),
     url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1400&q=80');
   background-position: center;
   background-size: cover;
@@ -13,19 +15,61 @@
 }
 
 .hero h1 {
-  max-width: 760px;
   margin: 24px 0 12px;
-  font-size: clamp(2rem, 4vw, 4.25rem);
-  font-weight: 800;
-  line-height: 1.02;
+  font-size: clamp(3.2rem, 7vw, 6.75rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.92;
 }
 
 .hero p {
-  max-width: 720px;
+  max-width: 740px;
   margin: 0;
   color: #dbeafe;
   font-size: 1.05rem;
   line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.hero-actions mat-icon {
+  margin-right: 8px;
+}
+
+.hero-proof {
+  display: grid;
+  gap: 12px;
+}
+
+.hero-proof div {
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(10px);
+}
+
+.hero-proof strong,
+.hero-proof span {
+  display: block;
+}
+
+.hero-proof strong {
+  font-size: 1.7rem;
+}
+
+.hero-proof span {
+  margin-top: 4px;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .scan-grid {
@@ -36,10 +80,16 @@
 }
 
 .scan-card {
-  min-height: 240px;
+  min-height: 250px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 8px;
   box-shadow: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.scan-card:hover {
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+  transform: translateY(-2px);
 }
 
 .scan-card p {
@@ -61,6 +111,7 @@ mat-card-actions {
 
 @media (max-width: 900px) {
   .hero {
+    grid-template-columns: 1fr;
     min-height: 240px;
     padding: 28px;
   }

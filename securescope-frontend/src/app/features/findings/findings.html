@@ -69,7 +69,7 @@
           <ng-container matColumnDef="severity">
             <th mat-header-cell *matHeaderCellDef>Severity</th>
             <td mat-cell *matCellDef="let finding">
-              <mat-chip [class]="severityClass(finding)">{{ finding.severity }}</mat-chip>
+              <app-severity-chip [severity]="finding.severity" />
             </td>
           </ng-container>
 
@@ -127,10 +127,11 @@
         </table>
       </div>
     } @else {
-      <div class="empty-state">
-        <mat-icon>verified_user</mat-icon>
-        <p>No findings match the current filters.</p>
-      </div>
+      <app-empty-state
+        icon="verified_user"
+        title="No matching findings"
+        message="Adjust the filters or run a new scan to review fresh findings."
+      />
     }
   </mat-card-content>
 </mat-card>

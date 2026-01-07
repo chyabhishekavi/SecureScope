@@ -64,12 +64,27 @@
     </mat-card-content>
   </mat-card>
 
+  @if (isLoading) {
+    <mat-card class="state-card">
+      <div class="loading-state">
+        <mat-spinner diameter="36" />
+        <span>Scanning snippet and preparing masked findings...</span>
+      </div>
+    </mat-card>
+  }
+
+  @if (errorMessage) {
+    <mat-card class="state-card">
+      <app-empty-state icon="error_outline" title="Scan failed" [message]="errorMessage" />
+    </mat-card>
+  }
+
   @if (scanResult) {
     <section class="result-panel" aria-label="Scan result">
       <div class="score-grid">
         <mat-card class="metric-card">
           <span>Security Score</span>
-          <strong>{{ scanResult.securityScore }}</strong>
+          <strong><app-security-score-badge [score]="scanResult.securityScore" /></strong>
         </mat-card>
         <mat-card class="metric-card">
           <span>Risk Level</span>
@@ -97,9 +112,7 @@
                 <ng-container matColumnDef="severity">
                   <th mat-header-cell *matHeaderCellDef>Severity</th>
                   <td mat-cell *matCellDef="let finding">
-                    <span [class]="severityClass(finding)">
-                      {{ finding.severity }}
-                    </span>
+                    <app-severity-chip [severity]="finding.severity" />
                   </td>
                 </ng-container>
 
@@ -128,10 +141,11 @@
               </table>
             </div>
           } @else {
-            <div class="empty-state">
-              <mat-icon>verified_user</mat-icon>
-              <p>No findings were detected by the current static rules.</p>
-            </div>
+            <app-empty-state
+              icon="verified_user"
+              title="No findings detected"
+              message="The current static rules did not flag this snippet."
+            />
           }
         </mat-card-content>
       </mat-card>

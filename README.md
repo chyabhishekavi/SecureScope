@@ -637,6 +637,17 @@ The Angular `/reports` page includes:
 - Report Preview page at `/reports/:reportId`
 - Download Report button for saved HTML reports
 
+### Screenshot Placeholders
+
+Add polished portfolio screenshots to `docs/screenshots` as the UI stabilizes:
+
+- `docs/screenshots/home.png` - SecureScope landing page and scan entry points
+- `docs/screenshots/dashboard.png` - security overview cards, charts, and recent scans
+- `docs/screenshots/quick-scan.png` - Quick Code Scan form and result state
+- `docs/screenshots/projects.png` - project details with ZIP and GitHub scan options
+- `docs/screenshots/findings.png` - findings filters, severity chips, and masked evidence
+- `docs/screenshots/reports.png` - report preview and download workflow
+
 ## Planned Modules
 
 - Authentication and user accounts

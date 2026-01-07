@@ -1,14 +1,34 @@
 <section class="hero">
-  <div>
-    <mat-chip-set aria-label="SecureScope status">
-      <mat-chip>Backend ready</mat-chip>
-      <mat-chip>Frontend base</mat-chip>
+  <div class="hero-content">
+    <mat-chip-set aria-label="SecureScope capabilities">
+      <mat-chip>Static checks</mat-chip>
+      <mat-chip>OWASP mapping</mat-chip>
+      <mat-chip>Masked evidence</mat-chip>
     </mat-chip-set>
-    <h1>Security scanning workspace for developer-friendly findings.</h1>
+    <h1>SecureScope</h1>
     <p>
-      Start with a pasted snippet, move into ZIP uploads, and grow into GitHub repository scans with
-      masked findings, scores, and exportable reports.
+      A full-stack security scanning dashboard for quick code reviews, project archive scans,
+      GitHub repository scans, scored findings, and exportable security reports.
     </p>
+    <div class="hero-actions">
+      <a mat-flat-button color="primary" routerLink="/quick-scan">
+        <mat-icon>bolt</mat-icon>
+        Start Quick Scan
+      </a>
+      <a mat-stroked-button routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon>
+        View Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-proof" aria-label="SecureScope highlights">
+    @for (point of proofPoints; track point.label) {
+      <div>
+        <strong>{{ point.value }}</strong>
+        <span>{{ point.label }}</span>
+      </div>
+    }
   </div>
 </section>
 
@@ -20,6 +40,7 @@
           <mat-icon>{{ card.icon }}</mat-icon>
         </div>
         <mat-card-title>{{ card.title }}</mat-card-title>
+        <mat-card-subtitle>{{ card.badge }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <p>{{ card.description }}</p>

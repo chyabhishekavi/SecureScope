@@ -9,11 +9,12 @@ import { ProjectScanSummary } from '../../core/models/project-scan-summary';
 import { ScanResult } from '../../core/models/scan-result';
 import { ZipUploadResponse } from '../../core/models/zip-upload-response';
 import { ProjectService } from '../../core/services/project.service';
+import { SecurityScoreBadge } from '../../shared/components/security-score-badge/security-score-badge';
 import { MaterialModule } from '../../shared/material/material.module';
 
 @Component({
   selector: 'app-project-details',
-  imports: [DatePipe, FormsModule, RouterLink, MaterialModule],
+  imports: [DatePipe, FormsModule, RouterLink, SecurityScoreBadge, MaterialModule],
   templateUrl: './project-details.html',
   styleUrl: './project-details.scss'
 })
@@ -109,11 +110,15 @@ export class ProjectDetails implements OnInit {
 
           this.uploadProgress = 100;
           this.uploadResponse = event.response;
-          this.snackBar.open('ZIP uploaded and validated.', 'Close', { duration: 3000 });
+          this.snackBar.open('ZIP uploaded and validated.', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
         },
         error: () => {
           this.snackBar.open('Unable to upload ZIP. Confirm it is a valid ZIP under 10 MB.', 'Close', {
-            duration: 5000
+            duration: 5000,
+            panelClass: ['error-snackbar']
           });
         }
       });
@@ -134,11 +139,17 @@ export class ProjectDetails implements OnInit {
       .subscribe({
         next: (scanResult) => {
           this.scanResult = scanResult;
-          this.snackBar.open('ZIP scan completed.', 'Close', { duration: 3000 });
+          this.snackBar.open('ZIP scan completed.', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
           this.loadProject(this.project!.id);
         },
         error: () => {
-          this.snackBar.open('Unable to scan uploaded ZIP.', 'Close', { duration: 4000 });
+          this.snackBar.open('Unable to scan uploaded ZIP.', 'Close', {
+            duration: 4000,
+            panelClass: ['error-snackbar']
+          });
         }
       });
   }
@@ -158,11 +169,17 @@ export class ProjectDetails implements OnInit {
       .subscribe({
         next: (repository) => {
           this.githubRepositoryUrl = repository.repositoryUrl;
-          this.snackBar.open(`Connected ${repository.repositoryName}.`, 'Close', { duration: 3000 });
+          this.snackBar.open(`Connected ${repository.repositoryName}.`, 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
           this.loadProject(this.project!.id);
         },
         error: () => {
-          this.snackBar.open('Enter a valid public GitHub repository URL.', 'Close', { duration: 5000 });
+          this.snackBar.open('Enter a valid public GitHub repository URL.', 'Close', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          });
         }
       });
   }
@@ -187,12 +204,16 @@ export class ProjectDetails implements OnInit {
       .subscribe({
         next: (scanResult) => {
           this.githubScanResult = scanResult;
-          this.snackBar.open('GitHub repository scan completed.', 'Close', { duration: 3000 });
+          this.snackBar.open('GitHub repository scan completed.', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
           this.loadProject(this.project!.id);
         },
         error: () => {
           this.snackBar.open('Unable to scan repository. Confirm the URL is public and valid.', 'Close', {
-            duration: 5000
+            duration: 5000,
+            panelClass: ['error-snackbar']
           });
         }
       });

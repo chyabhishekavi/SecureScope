@@ -5,11 +5,13 @@ import type { Chart, ChartConfiguration } from 'chart.js';
 import { forkJoin } from 'rxjs';
 import { DashboardMetric, DashboardSummary, RecentScan } from '../../core/models/dashboard';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { EmptyState } from '../../shared/components/empty-state/empty-state';
+import { SecurityScoreBadge } from '../../shared/components/security-score-badge/security-score-badge';
 import { MaterialModule } from '../../shared/material/material.module';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DatePipe, MaterialModule],
+  imports: [DatePipe, EmptyState, SecurityScoreBadge, MaterialModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -25,6 +27,7 @@ export class Dashboard implements AfterViewInit, OnDestroy, OnInit {
   protected severitySummary: DashboardMetric[] = [];
   protected owaspSummary: DashboardMetric[] = [];
   protected isLoading = false;
+  protected errorMessage = '';
 
   private severityChart?: Chart;
   private owaspChart?: Chart;
@@ -49,8 +52,13 @@ export class Dashboard implements AfterViewInit, OnDestroy, OnInit {
     return `risk-pill risk-${scan.riskLevel.toLowerCase()}`;
   }
 
+  protected reloadDashboard(): void {
+    this.loadDashboard();
+  }
+
   private loadDashboard(): void {
     this.isLoading = true;
+    this.errorMessage = '';
 
     forkJoin({
       summary: this.dashboardService.getSummary(),
@@ -66,7 +74,11 @@ export class Dashboard implements AfterViewInit, OnDestroy, OnInit {
       },
       error: () => {
         this.isLoading = false;
-        this.snackBar.open('Unable to load dashboard metrics.', 'Close', { duration: 4000 });
+        this.errorMessage = 'Unable to load dashboard metrics. Confirm the backend is running and try again.';
+        this.snackBar.open('Unable to load dashboard metrics.', 'Close', {
+          duration: 4000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
   }

@@ -111,6 +111,11 @@ textarea {
   font-size: 2rem;
 }
 
+.metric-card app-security-score-badge {
+  display: inline-block;
+  margin-top: 2px;
+}
+
 .scan-id-card strong {
   overflow-wrap: anywhere;
   font-family: 'Courier New', monospace;
@@ -142,54 +147,19 @@ td {
   vertical-align: top;
 }
 
-.severity-pill {
-  display: inline-block;
-  min-width: 72px;
-  padding: 5px 9px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-align: center;
+.state-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: none;
 }
 
-.severity-critical {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.severity-high {
-  background: #ffedd5;
-  color: #9a3412;
-}
-
-.severity-medium {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.severity-low {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.severity-info {
-  background: #e2e8f0;
-  color: #334155;
-}
-
-.empty-state {
+.loading-state {
   display: grid;
   justify-items: center;
-  padding: 36px 16px;
+  gap: 12px;
+  padding: 34px 16px;
   color: #475569;
   text-align: center;
-}
-
-.empty-state mat-icon {
-  width: 48px;
-  height: 48px;
-  color: #0f766e;
-  font-size: 48px;
 }
 
 @media (max-width: 980px) {

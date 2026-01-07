@@ -10,11 +10,13 @@ import {
   FindingStatus
 } from '../../core/models/finding';
 import { FindingService } from '../../core/services/finding.service';
+import { EmptyState } from '../../shared/components/empty-state/empty-state';
+import { SeverityChip } from '../../shared/components/severity-chip/severity-chip';
 import { MaterialModule } from '../../shared/material/material.module';
 
 @Component({
   selector: 'app-findings',
-  imports: [ReactiveFormsModule, RouterLink, MaterialModule],
+  imports: [ReactiveFormsModule, RouterLink, EmptyState, SeverityChip, MaterialModule],
   templateUrl: './findings.html',
   styleUrl: './findings.scss'
 })
@@ -69,7 +71,10 @@ export class Findings implements OnInit {
           this.findings = findings;
         },
         error: () => {
-          this.snackBar.open('Unable to load findings.', 'Close', { duration: 4000 });
+          this.snackBar.open('Unable to load findings.', 'Close', {
+            duration: 4000,
+            panelClass: ['error-snackbar']
+          });
         }
       });
   }
@@ -101,16 +106,18 @@ export class Findings implements OnInit {
         this.findings = this.findings.map((item) =>
           item.id === updatedFinding.id ? updatedFinding : item
         );
-        this.snackBar.open('Finding status updated.', 'Close', { duration: 3000 });
+        this.snackBar.open('Finding status updated.', 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
       },
       error: () => {
-        this.snackBar.open('Unable to update finding status.', 'Close', { duration: 4000 });
+        this.snackBar.open('Unable to update finding status.', 'Close', {
+          duration: 4000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
-  }
-
-  protected severityClass(finding: Finding): string {
-    return `severity-chip severity-${finding.severity.toLowerCase()}`;
   }
 
   protected categoryClass(finding: Finding): string {
