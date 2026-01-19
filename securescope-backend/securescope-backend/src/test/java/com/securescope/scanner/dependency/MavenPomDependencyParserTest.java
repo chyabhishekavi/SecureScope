@@ -1,8 +1,10 @@
 package com.securescope.scanner.dependency;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
+import com.securescope.common.exception.BadRequestException;
 import org.junit.jupiter.api.Test;
 
 class MavenPomDependencyParserTest {
@@ -31,5 +33,12 @@ class MavenPomDependencyParserTest {
 		assertThat(parser.parse(pomXml))
 			.extracting(DependencyDescriptor::name, DependencyDescriptor::version, DependencyDescriptor::ecosystem)
 			.containsExactly(tuple("org.apache.logging.log4j:log4j-core", "2.14.1", "Maven"));
+	}
+
+	@Test
+	void parseRejectsInvalidPomXml() {
+		assertThatThrownBy(() -> parser.parse("<project><dependencies>"))
+			.isInstanceOf(BadRequestException.class)
+			.hasMessage("Unable to parse Maven pom.xml");
 	}
 }

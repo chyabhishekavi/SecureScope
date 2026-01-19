@@ -82,6 +82,20 @@ cd securescope-backend/securescope-backend
 .\mvnw.cmd clean test
 ```
 
+Run the backend unit test suite:
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd test
+```
+
+Create the backend package without rerunning tests:
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd package -DskipTests
+```
+
 ### Database Setup
 
 SecureScope backend is configured for PostgreSQL.
@@ -534,6 +548,13 @@ http://localhost:4200
 ```powershell
 cd securescope-frontend
 npm run build
+```
+
+Run the frontend unit tests in headless Chrome:
+
+```powershell
+cd securescope-frontend
+npm test -- --watch=false --browsers=ChromeHeadless
 ```
 
 Current routes:

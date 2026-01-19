@@ -32,4 +32,31 @@ class RiskyPatternScannerServiceTest {
 			.extracting(FindingResult::owaspCategory)
 			.contains("A03:2021 - Injection", "A05:2021 - Security Misconfiguration");
 	}
+
+	@Test
+	void scanFindsSha1AndPermissiveCors() {
+		List<CodeLine> lines = List.of(
+			new CodeLine(1, "MessageDigest.getInstance(\"SHA-1\");"),
+			new CodeLine(2, "config.allowedOrigins(\"*\");")
+		);
+
+		List<FindingResult> findings = riskyPatternScannerService.scan(lines, "SecurityConfig.java");
+
+		assertThat(findings)
+			.extracting(FindingResult::title)
+			.containsExactly("Weak hash algorithm: SHA1", "Permissive CORS configuration");
+		assertThat(findings)
+			.extracting(FindingResult::severity)
+			.containsExactly(com.securescope.common.enums.Severity.HIGH, com.securescope.common.enums.Severity.MEDIUM);
+	}
+
+	@Test
+	void scanReturnsNoFindingsForParameterizedQueryAndSafeCors() {
+		List<CodeLine> lines = List.of(
+			new CodeLine(1, "PreparedStatement statement = connection.prepareStatement(\"SELECT * FROM users WHERE id = ?\");"),
+			new CodeLine(2, "config.allowedOrigins(\"https://app.example.com\");")
+		);
+
+		assertThat(riskyPatternScannerService.scan(lines, "Repository.java")).isEmpty();
+	}
 }

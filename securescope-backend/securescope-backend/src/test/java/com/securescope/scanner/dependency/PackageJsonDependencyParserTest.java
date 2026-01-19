@@ -31,4 +31,9 @@ class PackageJsonDependencyParserTest {
 				tuple("typescript", "5.9.2", "npm")
 			);
 	}
+
+	@Test
+	void parseReturnsEmptyListForInvalidPackageJson() {
+		assertThat(parser.parse("{ invalid json")).isEmpty();
+	}
 }

@@ -28,6 +28,29 @@ class SecurityScoringServiceTest {
 		assertThat(scoreResult.riskLevel()).isEqualTo(RiskLevel.HIGH);
 	}
 
+	@Test
+	void calculateScoreReturnsSafeScoreWhenNoFindingsExist() {
+		ScoreResult scoreResult = securityScoringService.calculateScore(List.of());
+
+		assertThat(scoreResult.securityScore()).isEqualTo(100);
+		assertThat(scoreResult.riskLevel()).isEqualTo(RiskLevel.SAFE);
+	}
+
+	@Test
+	void calculateScoreDoesNotGoBelowZero() {
+		List<FindingResult> findings = List.of(
+			finding(Severity.CRITICAL),
+			finding(Severity.CRITICAL),
+			finding(Severity.CRITICAL),
+			finding(Severity.CRITICAL)
+		);
+
+		ScoreResult scoreResult = securityScoringService.calculateScore(findings);
+
+		assertThat(scoreResult.securityScore()).isZero();
+		assertThat(scoreResult.riskLevel()).isEqualTo(RiskLevel.CRITICAL);
+	}
+
 	private FindingResult finding(Severity severity) {
 		return new FindingResult(
 			"Test finding",

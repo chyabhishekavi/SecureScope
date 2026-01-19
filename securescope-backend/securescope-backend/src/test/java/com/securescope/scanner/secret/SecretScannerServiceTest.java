@@ -34,4 +34,34 @@ class SecretScannerServiceTest {
 		assertThat(findings.get(0).evidence()).contains("supe****word");
 		assertThat(findings.get(0).evidence()).doesNotContain("super-secret-password");
 	}
+
+	@Test
+	void scanFindsTokenApiKeyAndJwtSecretAssignments() {
+		List<CodeLine> lines = List.of(
+			new CodeLine(1, "const token = \"token-value-123456\";"),
+			new CodeLine(2, "apiKey = \"api-key-1234567890\""),
+			new CodeLine(3, "jwtSecret = \"jwt-secret-123456\"")
+		);
+
+		List<FindingResult> findings = secretScannerService.scan(lines, "config.ts");
+
+		assertThat(findings)
+			.extracting(FindingResult::title)
+			.containsExactly("Hardcoded token", "Hardcoded API key", "JWT secret in source code");
+		assertThat(findings)
+			.allSatisfy(finding -> {
+				assertThat(finding.evidence()).contains("****");
+				assertThat(finding.owaspCategory()).isEqualTo("A02:2021 - Cryptographic Failures");
+			});
+	}
+
+	@Test
+	void scanReturnsNoFindingsForCleanLines() {
+		List<CodeLine> lines = List.of(
+			new CodeLine(1, "const value = process.env.API_KEY;"),
+			new CodeLine(2, "const passwordHash = await hash(password);")
+		);
+
+		assertThat(secretScannerService.scan(lines, "clean.js")).isEmpty();
+	}
 }
