@@ -1,28 +1,62 @@
 # SecureScope
 
-SecureScope is a flagship full-stack security scanning dashboard for developers who want fast, understandable security feedback before code reaches production.
+SecureScope is a full-stack security scanning dashboard built with Angular, Spring Boot, PostgreSQL, and JWT authentication.
 
-The project will be built feature by feature with a clean Angular frontend, a Spring Boot backend, PostgreSQL persistence, JWT authentication, and developer-friendly scan reports.
+The project lets a user scan pasted code, uploaded ZIP files, or public GitHub repositories. It looks for common security issues such as hardcoded secrets, risky code patterns, and known vulnerable dependency versions from a small mock vulnerability database. Results are saved, mapped to OWASP-style categories, scored, shown in a dashboard, and exported as HTML reports.
 
-## Project Overview
+I built this project to understand how security scanning tools work at a basic level: request handling, archive extraction, rule-based scanning, finding storage, score calculation, and developer-friendly reporting.
 
-SecureScope will allow users to scan source code and project artifacts for common application security risks. The dashboard will focus on clear findings, masked sensitive values, OWASP Top 10 mapping, practical remediation guidance, and exportable reports.
+## Short Project Summary
 
-## SecureScope Features
+SecureScope is not a production SAST platform. It is a portfolio project that demonstrates how a security scanning workflow can be designed end to end:
 
-- Quick Code Scan for pasted snippets
-- Project ZIP upload and scan
-- GitHub repository connection and scan
-- Hardcoded secret detection with masked output
-- Vulnerable dependency detection
-- Risky code pattern detection
-- Missing security best practice checks
-- OWASP Top 10 mapped findings
-- Security score calculation
-- Developer-friendly fix recommendations
-- HTML and PDF security reports
-- Authenticated user dashboard
-- Scan history and report management
+- Angular frontend for authentication, scan forms, dashboards, findings, projects, and reports
+- Spring Boot backend for APIs, authentication, persistence, scanning, and reports
+- PostgreSQL for users, projects, scans, findings, and report metadata
+- Rule-based scanner for secrets, risky patterns, and dependency checks
+- HTML report generation with masked evidence
+
+## Why I Built This Project
+
+Security tools can feel like a black box. I wanted to build a smaller version of the workflow myself so I could understand the moving parts:
+
+- how code or project files enter the system
+- how scan rules are organized
+- how findings are normalized and stored
+- how severity and security score can be calculated
+- how a frontend can make security results easier to read
+- how reports can be generated without exposing full secrets
+
+It also gave me a practical full-stack project that combines backend APIs, frontend state, authentication, database design, testing, and security-focused business logic.
+
+## Problem It Solves
+
+Developers often need quick feedback before code reaches a formal review or CI pipeline. SecureScope helps with early checks for:
+
+- secrets accidentally committed into code
+- risky patterns such as weak hashing, disabled CSRF, permissive CORS, and SQL string concatenation
+- dependency versions that match a small built-in mock vulnerability database
+- project-level security trends across scans
+
+The goal is simple feedback, not complete coverage.
+
+## Main Features
+
+- Register and login with JWT authentication
+- Run a Quick Code Scan from pasted code
+- Create and manage projects
+- Upload a project ZIP and scan supported files
+- Connect a public GitHub repository URL and scan its downloaded ZIP archive
+- Detect hardcoded passwords, tokens, API keys, JWT secrets, and private key headers
+- Detect risky code patterns such as MD5, SHA1, disabled CSRF, permissive CORS, and SQL concatenation
+- Parse Maven `pom.xml` and npm `package.json`
+- Flag example vulnerable dependencies from a mock vulnerability database
+- Map findings to OWASP-style categories
+- Calculate a security score and risk level
+- View and update finding status
+- View dashboard metrics and charts
+- Generate and download HTML security reports
+- Mask sensitive evidence in API responses, UI, and reports
 
 ## Tech Stack
 
@@ -37,7 +71,7 @@ SecureScope will allow users to scan source code and project artifacts for commo
 
 ### Backend
 
-- Java
+- Java 17
 - Spring Boot
 - Spring Security
 - Spring Data JPA
@@ -46,253 +80,98 @@ SecureScope will allow users to scan source code and project artifacts for commo
 - Maven
 - JWT authentication
 
-## Backend Setup
+## Architecture Overview
 
-The Spring Boot backend project is located at:
+SecureScope uses a standard frontend/backend split.
+
+```text
+Angular UI
+  -> Auth interceptor adds JWT
+  -> Spring Boot REST APIs
+  -> Scanner services run rule checks
+  -> PostgreSQL stores users, projects, scans, findings, and reports
+```
+
+The scanner is intentionally rule-based. It reads code as text, splits it into lines, applies regex and parser-based checks, creates normalized findings, calculates a score, and stores the scan result.
+
+More detail is available in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Backend Overview
+
+The backend lives in:
 
 ```text
 securescope-backend/securescope-backend
 ```
 
-### Prerequisites
+Important packages:
 
-- Java 17 or newer
-- Maven wrapper included with the backend project
+- `auth`: register, login, current user, JWT service, security user details
+- `config`: Spring Security and web configuration
+- `dashboard`: user-scoped summary and chart data
+- `finding`: finding list, details, filtering, and status updates
+- `project`: project CRUD and project scan history
+- `report`: HTML report generation, metadata, preview, and download
+- `scanner`: quick scan, ZIP scan, GitHub scan, rules, dependency checks, OWASP mapping, scoring
+- `persistence.entity`: JPA entities
+- `persistence.repository`: Spring Data repositories
+- `common`: shared responses, enums, exceptions, and masking utility
 
-### Run the Backend
+## Frontend Overview
 
-From the backend project folder:
-
-```powershell
-cd securescope-backend/securescope-backend
-./mvnw spring-boot:run
-```
-
-On Windows PowerShell, you can also run:
-
-```powershell
-cd securescope-backend/securescope-backend
-.\mvnw.cmd spring-boot:run
-```
-
-### Validate the Backend Build
-
-```powershell
-cd securescope-backend/securescope-backend
-.\mvnw.cmd clean test
-```
-
-Run the backend unit test suite:
-
-```powershell
-cd securescope-backend/securescope-backend
-.\mvnw.cmd test
-```
-
-Create the backend package without rerunning tests:
-
-```powershell
-cd securescope-backend/securescope-backend
-.\mvnw.cmd package -DskipTests
-```
-
-### Database Setup
-
-SecureScope backend is configured for PostgreSQL.
-
-Default local database settings:
+The frontend lives in:
 
 ```text
-Database: securescope_db
-Host: localhost
-Port: 5432
-Username: postgres
-Password: postgres
+securescope-frontend
 ```
 
-Create the local database before running persistence-backed features:
+Main feature areas:
 
-```sql
-CREATE DATABASE securescope_db;
-```
+- `features/home`: landing page and scan entry points
+- `features/auth`: login and register pages
+- `features/dashboard`: security overview cards, charts, and recent scans
+- `features/projects`: project CRUD, ZIP upload scan, GitHub scan
+- `features/quick-scan`: pasted code scan flow
+- `features/findings`: finding filters, details, and status updates
+- `features/reports`: report list, preview, and download
+- `layout`: header, sidebar, main layout
+- `shared/components`: reusable UI pieces such as empty states, severity chips, and score badges
 
-The backend datasource is configured in:
+## Scanner Engine Overview
 
-```text
-securescope-backend/securescope-backend/src/main/resources/application.yml
-```
+The scanner engine is split into small services:
 
-Run PostgreSQL locally, then start the backend:
+- `SecretScannerService`: detects hardcoded secrets
+- `RiskyPatternScannerService`: detects simple risky code patterns
+- `DependencyScannerService`: parses dependency files and checks mock vulnerability data
+- `OwaspMappingService`: maps scanner concepts to OWASP-style labels
+- `SecurityScoringService`: turns findings into a score and risk level
+- `ProjectArchiveScanService`: shared scanning and persistence for ZIP and GitHub archives
 
-```powershell
-cd securescope-backend/securescope-backend
-.\mvnw.cmd spring-boot:run
-```
+The scanner does static checks only. It does not execute code, run data-flow analysis, or inspect runtime behavior.
 
-Hibernate is currently set to `ddl-auto: update` for local development so the first tables can be created from the JPA entities. Add a migration tool before production deployment.
+## Quick Code Scan Flow
 
-### Health Check API
+1. User opens `/quick-scan`.
+2. User enters snippet name, language, file name, and code content.
+3. Angular sends `POST /api/scans/quick-code`.
+4. Backend runs secret and risky-pattern rules.
+5. Backend calculates score and risk level.
+6. Scan and findings are saved to PostgreSQL.
+7. UI displays score, risk, total findings, and a findings table.
 
-```http
-GET /api/health
-```
+## ZIP Upload Scan Flow
 
-Expected response:
+1. User opens a project detail page.
+2. User uploads a `.zip` file with `POST /api/projects/{projectId}/upload`.
+3. Backend validates file type and file size.
+4. Backend extracts the ZIP into a temporary folder.
+5. Zip Slip protection rejects unsafe paths.
+6. Ignored folders such as `node_modules`, `target`, `dist`, and `.git` are skipped.
+7. Supported source/config files are scanned.
+8. Scan and findings are saved and linked to the project.
 
-```json
-{
-  "status": "UP",
-  "message": "SecureScope backend is running"
-}
-```
-
-### Authentication API
-
-SecureScope uses Spring Security with BCrypt password hashing and JWT bearer tokens.
-
-Public endpoints:
-
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/health`
-
-Protected endpoint:
-
-- `GET /api/auth/me`
-
-All other API routes require an `Authorization: Bearer <token>` header.
-
-Register request:
-
-```json
-{
-  "name": "SecureScope Developer",
-  "email": "developer@example.com",
-  "password": "password123"
-}
-```
-
-Login request:
-
-```json
-{
-  "email": "developer@example.com",
-  "password": "password123"
-}
-```
-
-Successful register and login responses include a JWT token and user details:
-
-```json
-{
-  "success": true,
-  "message": "Login successful",
-  "data": {
-    "token": "jwt-token",
-    "tokenType": "Bearer",
-    "user": {
-      "id": "user-id",
-      "name": "SecureScope Developer",
-      "email": "developer@example.com"
-    }
-  },
-  "timestamp": "..."
-}
-```
-
-### Quick Code Scan API
-
-```http
-POST /api/scans/quick-code
-```
-
-This endpoint requires a JWT bearer token. Each quick scan is saved to PostgreSQL with the logged-in user as the owner. If `projectId` is provided, the scan is linked to that project only when the project belongs to the same user. If `projectId` is omitted or `null`, SecureScope saves the scan as a standalone quick scan.
-
-Sample request:
-
-```json
-{
-  "snippetName": "Auth sample",
-  "language": "JavaScript",
-  "fileName": "auth.js",
-  "codeContent": "const password = \"super-secret-password\";\nMessageDigest.getInstance(\"MD5\");",
-  "projectId": null
-}
-```
-
-The scanner detects hardcoded passwords, tokens, API keys, JWT secrets, private key blocks, weak hash usage, disabled CSRF, permissive CORS, and SQL string concatenation. Sensitive evidence is masked before results are returned or saved.
-
-Sample response data:
-
-```json
-{
-  "scanId": "0f7b5ea7-2f09-4a5b-9858-0e2e35f0b71b",
-  "status": "COMPLETED",
-  "securityScore": 50,
-  "riskLevel": "MODERATE",
-  "totalFindings": 2,
-  "findings": []
-}
-```
-
-Saved scan APIs:
-
-```http
-GET /api/scans/{scanId}
-GET /api/scans/{scanId}/findings
-GET /api/scans/my-scans
-```
-
-Only the user who owns a scan can view the saved scan or its findings.
-
-### Projects API
-
-Project APIs require a JWT bearer token and are scoped to the logged-in user. Users can only create, view, update, or delete their own projects.
-
-```http
-POST /api/projects
-GET /api/projects
-GET /api/projects/{projectId}
-PUT /api/projects/{projectId}
-DELETE /api/projects/{projectId}
-```
-
-Project request:
-
-```json
-{
-  "name": "SecureScope Web App",
-  "description": "Angular and Spring Boot security scanning workspace",
-  "sourceType": "GITHUB_REPOSITORY",
-  "technology": "Angular, Spring Boot, PostgreSQL",
-  "githubUrl": "https://github.com/example/securescope"
-}
-```
-
-Project responses include scan history for scans linked to the project. Quick Code Scan can link to a project by sending the optional `projectId` field in the scan request.
-
-### ZIP Upload Scan API
-
-ZIP upload scan APIs require a JWT bearer token and are scoped to the project owner.
-
-```http
-POST /api/projects/{projectId}/upload
-POST /api/projects/{projectId}/scans
-```
-
-Upload accepts a multipart form field named `file` and validates that the archive is a `.zip` file no larger than 10 MB. The backend extracts the ZIP into a temporary workspace, rejects unsafe paths to prevent Zip Slip, and only keeps supported source/config files.
-
-Ignored folders:
-
-- `node_modules`
-- `target`
-- `build`
-- `dist`
-- `.git`
-- `.idea`
-- `.vscode`
-
-Supported file types:
+Supported files:
 
 - `.java`
 - `.ts`
@@ -304,141 +183,88 @@ Supported file types:
 - `.xml`
 - `.env`
 
-Upload response:
+## GitHub Repository Scan Flow
 
-```json
-{
-  "uploadId": "upload-id",
-  "projectId": "project-id",
-  "fileName": "project.zip",
-  "fileSizeBytes": 12345,
-  "extractedFileCount": 8,
-  "skippedEntryCount": 3,
-  "uploadedAt": "..."
-}
-```
+1. User enters a public GitHub repository URL on a project detail page.
+2. Backend validates that the URL points to `github.com/{owner}/{repo}` and uses HTTPS.
+3. The repository URL is saved on the project.
+4. User starts a GitHub scan.
+5. Backend downloads the public repository ZIP using GitHub's zipball API.
+6. The same safe ZIP extraction logic is used.
+7. Supported files are scanned.
+8. Scan and findings are saved and linked to the project.
 
-Start scan request:
+Current GitHub scanning works for public repositories only. GitHub OAuth and private repository access are future work.
 
-```json
-{
-  "uploadId": "upload-id"
-}
-```
+## Secret Scanning Logic
 
-The scan reuses the existing secret and risky-pattern scanner engine, saves the scan and findings to PostgreSQL, links the scan to the project, and masks sensitive evidence.
+The secret scanner checks each line for:
 
-### GitHub Repository Scan API
+- hardcoded password names such as `password`, `passwd`, and `pwd`
+- hardcoded token names such as `token`, `access_token`, and `auth_token`
+- API key names such as `api_key`, `apikey`, `apiKey`, and `x-api-key`
+- JWT secret names such as `jwt_secret`, `jwtSecret`, and `jwt.secret`
+- private key block headers
 
-GitHub scan APIs require a JWT bearer token and are scoped to the project owner.
+Sensitive values are masked before they are returned or saved.
 
-```http
-POST /api/projects/{projectId}/github/connect
-POST /api/projects/{projectId}/github/scan
-```
+## Dependency Vulnerability Scanning Logic
 
-Connect request:
-
-```json
-{
-  "repositoryUrl": "https://github.com/example/securescope"
-}
-```
-
-SecureScope validates that the repository URL uses HTTPS and points to `github.com/{owner}/{repository}`. The backend normalizes `.git` suffixes, stores the connected URL on the project, and returns a repository summary.
-
-Scan request:
-
-```json
-{
-  "repositoryUrl": "https://github.com/example/securescope"
-}
-```
-
-If `repositoryUrl` is omitted, SecureScope scans the GitHub URL already connected to the project. The backend downloads the public repository ZIP using GitHub's zipball API, extracts it with the same Zip Slip protection used by ZIP uploads, ignores build/dependency folders, scans supported source/config files, saves the scan and findings, and links the scan to the project.
-
-Invalid, non-GitHub, non-HTTPS, missing, private, or unreachable repositories return a clear bad request error.
-
-### Dependency Vulnerability Scanner
-
-ZIP scans also parse dependency manifests and compare dependencies against the first mock vulnerability database.
-
-Supported manifests:
+Dependency scanning currently supports:
 
 - Maven `pom.xml`
 - npm `package.json`
 
-The scanner extracts dependency names and versions, then detects example vulnerable packages:
+The implementation extracts dependency name and version, then compares them with a small mock vulnerability database. Example checked packages include:
 
-- old `log4j-core` versions
-- old `spring-core` versions
-- old `jackson-databind` versions
-- old `lodash` versions
-- old `axios` versions
+- `log4j-core`
+- `spring-core`
+- `jackson-databind`
+- `lodash`
+- `axios`
 
-Dependency findings use the `VULNERABLE_DEPENDENCY` category and include package name, current version, vulnerability ID, severity, recommendation, and fixed version where available. These findings map to OWASP `A06:2021 - Vulnerable and Outdated Components`, representing software supply chain risk in this first implementation.
+This is not connected to a real CVE feed yet.
 
-### Findings API
+## OWASP Top 10 Mapping Logic
 
-Finding APIs require a JWT bearer token and return data only for findings owned by the logged-in user through their scans.
+Findings are mapped to OWASP-style categories based on the rule type:
 
-```http
-GET /api/findings
-GET /api/findings/{findingId}
-PATCH /api/findings/{findingId}/status
-```
+- secrets and weak crypto: `A02:2021 - Cryptographic Failures`
+- SQL string concatenation: `A03:2021 - Injection`
+- disabled CSRF and permissive CORS: `A05:2021 - Security Misconfiguration`
+- vulnerable dependencies: `A06:2021 - Vulnerable and Outdated Components`
 
-Supported finding filters:
+The mapping is intentionally simple and lives in `OwaspMappingService`.
 
-- `severity`
-- `category`
-- `owaspCategory`
-- `status`
+## Security Scoring Logic
 
-Supported finding statuses:
+Scores start at `100`. Findings subtract points by severity:
 
-- `OPEN`
-- `FIXED`
-- `IGNORED`
-- `FALSE_POSITIVE`
+- `CRITICAL`: 30
+- `HIGH`: 20
+- `MEDIUM`: 10
+- `LOW`: 5
+- `INFO`: 1
 
-Status update request:
+The score is never lower than `0`.
 
-```json
-{
-  "status": "FIXED"
-}
-```
+Risk levels:
 
-Finding responses include severity, category, OWASP mapping, file location, recommendation, status, and masked evidence. Full secrets must not be exposed in API responses, UI, logs, or reports.
+- `90-100`: `SAFE`
+- `75-89`: `LOW`
+- `50-74`: `MODERATE`
+- `25-49`: `HIGH`
+- `0-24`: `CRITICAL`
 
-### Dashboard API
+## Report Generation Logic
 
-Dashboard APIs require a JWT bearer token and return metrics only for the logged-in user.
+Reports are generated from saved scans.
 
-```http
-GET /api/dashboard/summary
-GET /api/dashboard/severity-summary
-GET /api/dashboard/owasp-summary
-GET /api/dashboard/score-trend
-```
+Implemented report format:
 
-The summary endpoint returns total projects, total scans, average security score, critical findings, high findings, and recent scans. The summary endpoints power the Angular security dashboard cards, severity chart, OWASP category chart, and recent scans table.
+- HTML
 
-### Security Reports API
-
-Report APIs require a JWT bearer token and are scoped to the scan owner.
-
-```http
-POST /api/scans/{scanId}/reports
-GET /api/scans/{scanId}/reports
-GET /api/reports/{reportId}
-GET /api/reports/{reportId}/download
-```
-
-The first report implementation generates HTML reports and stores report metadata plus HTML content in PostgreSQL. PDF generation is intentionally deferred until an HTML-to-PDF library is selected and configured.
-
-Reports include:
+Report content includes:
 
 - project name
 - scan date
@@ -453,257 +279,193 @@ Reports include:
 - recommendations
 - security disclaimer
 
-### Quick Code Scan UI
+PDF export is not implemented yet. It is listed as a future improvement.
 
-The Angular frontend includes a `/quick-scan` page that connects to:
+## Database Tables Overview
+
+The main JPA entities are:
+
+- `User`: account details and authentication identity
+- `Project`: project metadata, source type, technology, and optional GitHub URL
+- `Scan`: saved scan metadata, source type, status, score, risk, and owner
+- `Finding`: normalized security finding linked to a scan
+- `Report`: saved report metadata and generated HTML content
+
+`AuditableEntity` provides common ID and timestamp fields.
+
+Hibernate is currently configured with `ddl-auto: update` for local development.
+
+## API Overview
+
+More detail is available in [docs/API_CONTRACT.md](docs/API_CONTRACT.md).
+
+Main API groups:
+
+- Auth: register, login, current user
+- Projects: CRUD and scan history
+- Quick Scan: pasted code scan and saved scan access
+- ZIP Scan: upload archive and start project scan
+- GitHub Scan: connect repository and scan public repository ZIP
+- Findings: filter, detail, and status update
+- Dashboard: summary, severity, OWASP, and score trend
+- Reports: generate, list, preview, and download HTML reports
+
+## How To Run Backend
+
+Prerequisites:
+
+- Java 17 or newer
+- PostgreSQL running locally
+- Database named `securescope_db`
+
+Default database settings:
 
 ```text
-http://localhost:8080/api/scans/quick-code
+Host: localhost
+Port: 5432
+Database: securescope_db
+Username: postgres
+Password: postgres
 ```
 
-The page includes fields for snippet name, language, file name, and code content. Results show the security score, risk level, total findings, and a findings table with severity, title, OWASP category, file path, and recommendation.
+Create the database:
 
-After a successful scan, the page also shows the saved PostgreSQL scan ID returned by the backend.
+```sql
+CREATE DATABASE securescope_db;
+```
 
-Start the backend before running the frontend scan page:
+Run the backend:
 
 ```powershell
 cd securescope-backend/securescope-backend
 .\mvnw.cmd spring-boot:run
 ```
 
-Then run the frontend:
-
-```powershell
-cd securescope-frontend
-npm start
-```
-
-### Backend Architecture
-
-The backend follows a feature-first package structure under `com.securescope`.
-
-Current backend packages:
-
-- `auth`: registration, login, current-user API, JWT service, and authentication filter
-- `config`: application and web configuration
-- `scanner.archive`: shared archive scanning and scan persistence for ZIP and GitHub scans
-- `common.response`: shared API response models
-- `common.dto`: shared DTOs used across backend layers
-- `common.exception`: custom exceptions and global exception handling
-- `common.enums`: scan, finding, severity, and risk enums
-- `common.util`: reusable utility helpers such as sensitive value masking
-- `dashboard`: user-scoped security summary, severity, OWASP, and score trend APIs
-- `finding`: owner-scoped finding listing, filtering, detail, and status update APIs
-- `health`: health check API
-- `persistence.entity`: JPA entities for users, projects, scans, and findings
-- `persistence.repository`: Spring Data JPA repositories for persistence access
-- `project`: owner-scoped project CRUD APIs, DTOs, and project scan history responses
-- `report`: owner-scoped HTML security report generation, metadata, preview, and download APIs
-- `scanner`: quick code scanner orchestration, GitHub repository scanning, ZIP archive scanning, secret rules, risky pattern rules, OWASP mapping, scoring, and scanner DTOs
-
-## Frontend Setup
-
-The Angular frontend project is located at:
+Backend runs at:
 
 ```text
-securescope-frontend
+http://localhost:8080
 ```
 
-### Prerequisites
+## How To Run Frontend
 
-- Node.js 20 or newer
-- npm
-
-### Install Dependencies
-
-From the frontend project folder:
+Install dependencies:
 
 ```powershell
 cd securescope-frontend
 npm install
 ```
 
-On Windows PowerShell, if script execution blocks `npm`, use:
-
-```powershell
-npm.cmd install
-```
-
-### Run the Frontend
+Run the frontend:
 
 ```powershell
 cd securescope-frontend
 npm start
 ```
 
-The Angular development server runs at:
+Frontend runs at:
 
 ```text
 http://localhost:4200
 ```
 
-### Validate the Frontend Build
+## How To Build Backend
+
+Run tests:
 
 ```powershell
-cd securescope-frontend
-npm run build
+cd securescope-backend/securescope-backend
+.\mvnw.cmd test
 ```
 
-Run the frontend unit tests in headless Chrome:
+Package backend:
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd package -DskipTests
+```
+
+## How To Build Frontend
+
+Run tests:
 
 ```powershell
 cd securescope-frontend
 npm test -- --watch=false --browsers=ChromeHeadless
 ```
 
-Current routes:
+Build frontend:
 
-- `/`
-- `/login`
-- `/register`
-- `/dashboard`
-- `/quick-scan`
-- `/projects`
-- `/projects/new`
-- `/projects/:projectId`
-- `/projects/:projectId/edit`
-- `/findings`
-- `/findings/:findingId`
-- `/reports`
-- `/reports/:reportId`
-
-### Frontend Authentication Flow
-
-The Angular frontend includes login and register pages that call the Spring Boot authentication API:
-
-- `POST http://localhost:8080/api/auth/register`
-- `POST http://localhost:8080/api/auth/login`
-
-After successful login or registration, the JWT token and user details are stored in `localStorage`. The frontend auth interceptor attaches the token to outgoing API requests with:
-
-```text
-Authorization: Bearer <token>
+```powershell
+cd securescope-frontend
+npm run build
 ```
 
-Protected frontend routes redirect unauthenticated users to `/login`:
+Note: the Angular build currently passes with a bundle budget warning because the warning threshold is still set to `500 kB`.
 
-- `/dashboard`
-- `/projects`
-- `/projects/new`
-- `/projects/:projectId`
-- `/projects/:projectId/edit`
-- `/quick-scan`
-- `/findings`
-- `/findings/:findingId`
-- `/reports`
-- `/reports/:reportId`
+## Screenshots
 
-Logged-in users who open `/login` or `/register` are redirected to `/dashboard`. Header and sidebar logout actions clear the stored session.
+Screenshots are not checked into the repository yet. Placeholder locations:
 
-### Security Dashboard UI
+- Home Page: `docs/screenshots/home.png`
+- Quick Code Scan Page: `docs/screenshots/quick-scan.png`
+- Dashboard Page: `docs/screenshots/dashboard.png`
+- Findings Page: `docs/screenshots/findings.png`
+- Report Page: `docs/screenshots/reports.png`
 
-The Angular `/dashboard` page calls the dashboard APIs and displays:
+The `docs/screenshots` folder is present with a `.gitkeep` file.
 
-- Total Projects
-- Total Scans
-- Average Security Score
-- Critical Findings
-- High Findings
-- Severity breakdown chart
-- OWASP category breakdown chart
-- Recent scans table
+## Demo Flow
 
-### Findings Management UI
+A simple demo path:
 
-The Angular `/findings` page calls the findings APIs and includes:
+1. Start PostgreSQL and create `securescope_db`.
+2. Start the Spring Boot backend.
+3. Start the Angular frontend.
+4. Register a user.
+5. Log in.
+6. Run a Quick Code Scan with a hardcoded password and weak hash.
+7. Create a project.
+8. Upload a ZIP or connect a public GitHub repository.
+9. Run a project scan.
+10. Open Findings and update a finding status.
+11. Open Dashboard and explain the metrics.
+12. Generate an HTML report and download it.
 
-- Severity, category, OWASP category, and status filters
-- Dependency category quick filter
-- Severity chips
-- Dependency category chips
-- OWASP category display
-- Masked evidence preview
-- Status update actions
-- A `/findings/:findingId` detail page with location, masked evidence, and recommendation
+More interview notes are in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
-### ZIP Upload Scan UI
+## Known Limitations
 
-Project details pages include a ZIP upload scan workflow:
+- The scanner is rule-based and does not perform full static analysis.
+- Dependency vulnerability data is mocked, not pulled from a real advisory feed.
+- GitHub scanning supports public repositories only.
+- ZIP scans read supported files as UTF-8 text.
+- PDF report generation is not implemented yet.
+- No SARIF export yet.
+- No CI/CD scan trigger yet.
+- No team or organization workspace yet.
+- Database migrations are not configured; Hibernate `ddl-auto: update` is used for local development.
 
-- Choose a `.zip` project archive
-- Upload with simple progress feedback
-- Start a persisted ZIP scan
-- Review the completed security score, risk level, total findings, and saved scan ID
-- See the linked scan in the project scan history
+## Future Improvements
 
-### GitHub Repository Scan UI
+- Use a real vulnerability database such as OSV or NVD
+- Add GitHub OAuth for private repositories
+- Add CI/CD scan triggers
+- Export SARIF
+- Add deeper SAST rules
+- Add team workspaces
+- Improve false positive management
+- Add AI-assisted fix explanations
+- Add Docker deployment
+- Harden backend security configuration for production
+- Add Flyway or Liquibase migrations
 
-Project details pages include a GitHub repository scan workflow:
-
-- Enter a public GitHub repository URL
-- Connect the repository to the project
-- Start a persisted GitHub repository scan
-- Review loading state while the repository is downloaded and scanned
-- Review the completed security score, risk level, total findings, and saved scan ID
-- See the linked scan in the project scan history
-
-### Security Reports UI
-
-The Angular `/reports` page includes:
-
-- scan selection
-- Generate Report button
-- generated report list
-- Report Preview page at `/reports/:reportId`
-- Download Report button for saved HTML reports
-
-### Screenshot Placeholders
-
-Add polished portfolio screenshots to `docs/screenshots` as the UI stabilizes:
-
-- `docs/screenshots/home.png` - SecureScope landing page and scan entry points
-- `docs/screenshots/dashboard.png` - security overview cards, charts, and recent scans
-- `docs/screenshots/quick-scan.png` - Quick Code Scan form and result state
-- `docs/screenshots/projects.png` - project details with ZIP and GitHub scan options
-- `docs/screenshots/findings.png` - findings filters, severity chips, and masked evidence
-- `docs/screenshots/reports.png` - report preview and download workflow
-
-## Planned Modules
-
-- Authentication and user accounts
-- Scan request management
-- Quick code scanner
-- ZIP project scanner
-- GitHub repository scanner
-- Secret detection engine
-- Dependency vulnerability analyzer
-- Risk pattern analyzer
-- OWASP mapping service
-- Security scoring service
-- Report generation service
-- Dashboard analytics
-- Admin and audit views
-
-## Development Roadmap
-
-1. Workspace initialization and project documentation
-2. Backend foundation with Spring Boot dependencies and configuration
-3. Authentication with JWT and role-based access
-4. Quick Code Scan API
-5. Secret detection rules and masked findings
-6. Security score and OWASP mapping
-7. Angular application foundation
-8. Quick Code Scan UI
-9. Scan history and report details
-10. ZIP upload scanner
-11. GitHub repository scanner
-12. HTML/PDF report generation
-13. Dashboard charts and analytics
-14. Testing, validation, and deployment preparation
+More detail is in [docs/FUTURE_BACKLOG.md](docs/FUTURE_BACKLOG.md).
 
 ## Security Disclaimer
 
-SecureScope is intended to support developer security reviews and learning. It should not be treated as a complete replacement for professional penetration testing, secure code review, dependency auditing, threat modeling, or compliance assessment.
+SecureScope performs static checks and basic rule-based scanning. It does not replace professional penetration testing, manual secure code review, enterprise SAST/SCA tools, threat modeling, compliance assessment, or runtime security testing.
 
-Sensitive values must be masked in the UI, API responses, logs, and reports. The project should never intentionally expose full secrets discovered during scans.
+Findings should be treated as early feedback. A clean SecureScope scan does not prove that an application is secure.
+
+Sensitive values should stay masked in API responses, UI, logs, and reports.
