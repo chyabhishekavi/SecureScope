@@ -26,9 +26,10 @@ public class SecurityConfig {
 	) throws Exception {
 		return http
 			.csrf(csrf -> csrf.disable())
+			.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/auth/register", "/api/auth/login", "/api/health").permitAll()
+				.requestMatchers("/api/auth/register", "/api/auth/login", "/api/health", "/h2-console/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.authenticationProvider(authenticationProvider)

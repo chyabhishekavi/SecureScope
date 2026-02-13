@@ -315,26 +315,20 @@ Main API groups:
 Prerequisites:
 
 - Java 17 or newer
-- PostgreSQL running locally
-- Database named `securescope_db`
+- Maven wrapper included in the backend project
 
-Default database settings:
+The backend uses the `local` profile by default. That profile runs with a file-based H2 database, so PostgreSQL is not required for local development.
+
+Default local H2 settings:
 
 ```text
-Host: localhost
-Port: 5432
-Database: securescope_db
-Username: postgres
-Password: postgres
+JDBC URL: jdbc:h2:file:./data/securescope-db
+Username: sa
+Password: empty
+Console: http://localhost:8080/h2-console
 ```
 
-Create the database:
-
-```sql
-CREATE DATABASE securescope_db;
-```
-
-Run the backend:
+Run the backend with H2:
 
 ```powershell
 cd securescope-backend/securescope-backend
@@ -345,6 +339,35 @@ Backend runs at:
 
 ```text
 http://localhost:8080
+```
+
+H2 stores local database files under:
+
+```text
+securescope-backend/securescope-backend/data
+```
+
+PostgreSQL support is still available through the `postgres` profile for future use.
+
+PostgreSQL settings:
+
+```text
+Host: localhost
+Port: 5432
+Database: securescope_db
+Username: postgres
+Password: postgres
+```
+
+To run with PostgreSQL later, create the database:
+
+```sql
+CREATE DATABASE securescope_db;
+```
+
+```powershell
+cd securescope-backend/securescope-backend
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
 ## How To Run Frontend

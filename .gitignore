@@ -10,6 +10,7 @@ target/
 # Spring Boot
 application-local.properties
 application-*.local.properties
+securescope-backend/securescope-backend/data/
 
 # Angular and Node
 node_modules/

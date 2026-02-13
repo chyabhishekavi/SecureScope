@@ -1,18 +1,8 @@
 spring:
   application:
     name: securescope-backend
-  datasource:
-    url: jdbc:postgresql://localhost:5432/securescope_db
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
+  profiles:
+    active: local
 
 security:
   jwt:
