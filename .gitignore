@@ -5,12 +5,18 @@ target/
 *.war
 *.ear
 *.log
+logs/
+*.pid
+hs_err_pid*
 .mvn/wrapper/maven-wrapper.jar
 
 # Spring Boot
 application-local.properties
 application-*.local.properties
 securescope-backend/securescope-backend/data/
+*.h2.db
+*.mv.db
+*.trace.db
 
 # Angular and Node
 node_modules/

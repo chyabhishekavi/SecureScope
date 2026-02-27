@@ -36,7 +36,6 @@ These are realistic improvements I would consider next. Some are product feature
 - Add scan scheduling.
 - Add audit history for finding status changes.
 - Add richer dashboard trends.
-- Add AI-assisted fix explanations as an optional helper.
 
 ## Backend Hardening
 

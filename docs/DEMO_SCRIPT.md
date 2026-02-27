@@ -4,11 +4,7 @@ This is a simple script I can use when walking through the project in an intervi
 
 ## 1. Start The Backend
 
-Make sure PostgreSQL is running and the database exists:
-
-```sql
-CREATE DATABASE securescope_db;
-```
+For a local demo, the backend uses H2 by default. PostgreSQL is not required.
 
 Start Spring Boot:
 
@@ -121,7 +117,7 @@ Open Reports.
 
 Talking point:
 
-> Reports are generated from saved scan data. The current implementation stores HTML report content and report metadata in PostgreSQL.
+> Reports are generated from saved scan data. The current implementation stores HTML report content and report metadata in the configured database.
 
 ## 10. Architecture Explanation
 

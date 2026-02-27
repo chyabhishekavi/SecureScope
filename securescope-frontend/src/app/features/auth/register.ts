@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs';
@@ -42,11 +43,27 @@ export class Register {
           this.snackBar.open('SecureScope account created.', 'Close', { duration: 3000 });
           this.router.navigate(['/dashboard']);
         },
-        error: () => {
-          this.snackBar.open('Unable to create account. Try a different email.', 'Close', {
-            duration: 4000
+        error: (error: unknown) => {
+          this.snackBar.open(this.getRegistrationErrorMessage(error), 'Close', {
+            duration: 5000
           });
         }
       });
+  }
+
+  private getRegistrationErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        return 'Unable to reach the backend. Make sure Spring Boot is running on port 8080.';
+      }
+
+      const message = error.error?.message;
+
+      if (typeof message === 'string' && message.trim()) {
+        return message;
+      }
+    }
+
+    return 'Unable to create account. Please check the form and try again.';
   }
 }

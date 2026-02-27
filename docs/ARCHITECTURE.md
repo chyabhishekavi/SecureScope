@@ -17,10 +17,10 @@ Browser
   -> JWT auth interceptor
   -> Spring Boot controllers
   -> Services and scanner modules
-  -> PostgreSQL through Spring Data JPA
+  -> Database through Spring Data JPA
 ```
 
-The backend owns authentication, project data, scan execution, finding storage, dashboard summaries, and report generation.
+The backend owns authentication, project data, scan execution, finding storage, dashboard summaries, and report generation. Local development uses H2. A PostgreSQL profile is kept for future use.
 
 ## Backend Modules
 
